@@ -48,41 +48,121 @@
 
 ## Label Taxonomy
 
-<!-- Each label: a one-sentence definition and two real examples from your
-     reading. Then your decision rule for the hardest boundary.
+<!-- Milestone 2. Reddit blocked every automated fetch, so none of the posts below
+     was independently retrieved by Claude. Titles and descriptions come from my
+     own reading and are used as supplied. Exact post bodies are not quoted. -->
 
-     The decision rule is worth a point on its own and it's the thing most
-     people leave out. Every taxonomy has a hardest boundary. Name yours. -->
+Exactly three labels, with no catch-all. Labels apply to the **post itself**
+(title, body, caption, image), not to its comments. A factual headline or a
+quotation is not `analysis` unless the post uses a checkable fact to support its
+own main claim, and an unsupported factual statement is not a `hot_take` unless
+the post actually expresses a judgment or prediction.
 
-### `label_one`
+### `analysis`
 
-**Definition:**
+**Definition:** A claim supported by specific, checkable evidence that meaningfully supports it.
 
-**Example 1:**
->
+**Include when:** the evidence is load-bearing, meaning the claim would be weaker without it; the evidence is something a reader could check, such as a score, a percentage, a date or a named match event.
 
-**Example 2:**
->
+**Exclude when:** the post only reports a fact, headline, event or quotation with no argument built on it; the fact is decoration on a conclusion the writer had already reached; the "evidence" is general reasoning with nothing checkable in it.
 
-### `label_two`
+**Example 1:** INCOMPLETE. No candidate so far.
 
-**Definition:**
+**Example 2:** INCOMPLETE. No candidate so far.
 
-**Example 1:**
->
+### `hot_take`
 
-**Example 2:**
->
+**Definition:** A confident judgment or prediction without meaningful supporting evidence.
+
+**Include when:** the post expresses a judgment (a ranking, an evaluation of a player, an interpretation of someone's behavior) or a prediction; it offers only opinion-style reasoning, or a fact that does not actually support the conclusion; a statistic is present but only as a flourish.
+
+**Exclude when:** checkable evidence carries the argument (`analysis`); the post is mainly an emotional or humorous response (`reaction`); the post states a fact or news item without expressing any judgment or prediction. An unsupported statement of fact is not a `hot_take` by itself, and a question is not a judgment until the post answers it.
+
+**Example 1** (accepted, weak; wording from my screenshot and description, not independently verified): "Medvedev mocking Novak Injury?" with a 7-second video and Discussion flair, https://www.reddit.com/r/tennis/s/uaK8wcmHuo. The title puts an interpretation of Medvedev's behavior (mockery) to readers with nothing behind it except the clip, so it reads as an unsupported judgment. It is weak because it is phrased as a question and has no body text.
+
+**Example 2** (accepted, weak; same caveat): the image of a Djokovic quote saying women's tennis is the most successful and best-paid women's sport globally, https://www.reddit.com/r/tennis/s/gCUUfQKWNE. It is a broad, confident claim with no figure or event supporting it. It is weak because I do not know whether the poster endorsed the quote or only shared it as news, and it is also my borderline case below.
+
+These two were accepted at my own decision to have two examples, and both are borderline. A clearer `hot_take` (a poster's own confident claim or prediction, stated as a statement) would be a better example and should replace either one if I find it.
+
+### `reaction`
+
+**Definition:** A post that primarily expresses emotion or humor in the poster's own words or caption.
+
+**Include when:** the title, caption or text conveys feeling, celebration, admiration, nostalgia or humor about a match, result, player or moment; any score or statistic is only the thing being reacted to.
+
+**Exclude when:** the post turns the moment into a general claim about players or tennis (`hot_take`); it argues from evidence to a conclusion (`analysis`); it only reports or shows something and the poster's own words convey no feeling or humor.
+
+**Example 1** (accepted on the caption as I supplied it; not independently verified): "This season in a nutshell" with a tennis meme, https://www.reddit.com/r/tennis/s/Cm9WcwcqHA. The caption and meme are a humorous response with no argument.
+
+**Example 2** (accepted on the title and screenshot I supplied; not independently verified): "What an amazing answer to an amazing question" with a clapping emoji, a Novak Djokovic press-conference video, Big 3 flair, https://www.reddit.com/r/tennis/s/TytAry3m8l (link confirmed by me against my screenshot). The poster's own title expresses admiration for one specific moment and makes no argument. It is not a `hot_take` because it does not rank or predict anything general; it is a response to this answer.
+
+### Priority rule
+
+Apply in order and stop at the first yes:
+
+1. Does specific, checkable evidence directly support the post's main claim? -> `analysis`.
+2. Otherwise, does the post express a judgment or prediction? -> `hot_take`. This includes posts with a statistic that is only decoration, and posts that are heated but make a general claim.
+3. Otherwise, does the poster's own title, caption or text primarily express emotion or humor? -> `reaction`.
+4. If none of the three is a clean yes, exclude the post (next section). Do not force a label.
+
+If two of the first three are still defensible, pick the one the post spends most of its words on.
+
+### Posts outside the collection scope (excluded, not labelled)
+
+My scope is posts that make a claim, take a stance or express a response. A post that only reports an event, announces news, or shows a photo with no expressive caption fails all three definitions. It is excluded from the dataset instead of being forced into a label, and there is no fourth label for it.
+
+- **Reporting a fact is not analyzing it.** A post that says what happened ("player X got a warning", "event Y was postponed") is excluded unless it also argues something from specific evidence.
+- **Excluded posts are logged.** I keep a short list of what I skipped and why, so the Dataset section can say how I sampled. If I find myself excluding most of what I read, the scope is too narrow and I should rethink it, not relabel the exclusions.
+- **Two-label ambiguity is different.** A post that genuinely fits two of the three labels is resolved by the priority rule above, not excluded.
+
+### Posts reviewed so far (all provisional, none independently retrieved)
+
+| ID | Post (as supplied by me) | Link | Handling | Why |
+|---|---|---|---|---|
+| R1 | Title: "Medvedev mocking Novak Injury?" (Discussion flair, a 7-second video, no body text visible in my screenshot) | https://www.reddit.com/r/tennis/s/uaK8wcmHuo | `hot_take` (accepted, weak) | The title is a leading question and the screenshot shows a video with no body text. I first excluded it because a question is not a stated judgment. I later accepted it as a weak `hot_take` because the title asserts the mockery reading with no evidence beyond a 7-second clip |
+| R2 | "Dame ya la puta toalla": Jodar receives an unsportsmanlike-conduct warning after cursing at a ball kid | https://www.reddit.com/r/tennis/s/pBdqI4gxKG | **Excluded** | Reports an event. It is not `analysis` because it argues nothing from the event. Re-open only if the body adds a judgment or evidence-backed argument |
+| R3 | "ROGER (AGAIN) DOING ROGER THINGS" with Thierry Henry | https://www.reddit.com/r/tennis/s/lNnkYvsXE6 | Provisional `reaction` | The caption is playful and admiring. Not settled until I confirm the caption is the poster's own and the post has no argument |
+| R4 | "This season in a nutshell" with a tennis meme | https://www.reddit.com/r/tennis/s/Cm9WcwcqHA | `reaction` (accepted) | Humorous response in the poster's caption, no argument |
+| R5 | Picture of 12-year-old Carlos Alcaraz watching Roland Garros beneath the Eiffel Tower | https://www.reddit.com/r/tennis/s/WmBgCC61B0 | **Excluded** (for now) | I do not have a caption that expresses emotion, judgment or argument. Re-open if the original caption does |
+| R6 | Title: "Six Kings Slam postponed" (News flair; the post is an image of the organizer's announcement moving the event from October 21-24 to December 27-30, 2026, with no poster caption visible in my screenshot) | https://www.reddit.com/r/tennis/s/IM1JiFutGH | **Excluded** | The image is a press release. It gives dates, but its only reason is "organizational and logistical challenges", which is not specific, checkable evidence, and no argument is built on it. Reporting a fact is not analyzing it |
+| R7 | Headline: Nishikori retires as the most successful Asian male tennis player in history | https://www.reddit.com/r/tennis/s/x4mKkBVu7o | **Excluded** | News headline, no argument and no judgment of its own |
+| R8 | Photo of Maja Chwalinska with the Wuhan trophy, her first WTA title | https://www.reddit.com/r/tennis/s/ih7361Xm8N | **Excluded** | Achievement photo with no expressive text as supplied |
+| R9 | Image of a Djokovic quote saying women's tennis is the most successful and best-paid women's sport globally | https://www.reddit.com/r/tennis/s/gCUUfQKWNE | `hot_take` (accepted, weak), borderline with `analysis` | See the hardest boundary below. Accepted without knowing whether the poster endorsed the quote |
+| R10 | Swiatek explains she did not want to retire so Chwalinska could win normally | https://www.reddit.com/r/tennis/s/vngwGkmCpo | **Excluded** | Report of a player's explanation, with no argument or response from the poster |
+| R11 | Title: "Alcaraz celebrating Ruud's win" (Meme flair; a short clip of Alcaraz celebrating loudly on the Laver Cup bench; no body text visible in my screenshot). I have no link for this one yet | link needed | Provisional `reaction`, **unsettled** | The humor and emotion are in the clip and the Meme flair, but the title only describes what is shown. It counts only if I decide that the poster's own flair and clip satisfy "poster's own words or caption". Weaker than R4, whose caption itself carries the joke |
+| R12 | Title: "Wu Yibing comments on Zverev's sportsmanship" (ATP flair; an image of an article quoting Wu comparing his matches against Alcaraz and Zverev). I have no link for this one yet | link needed | **Excluded**, borderline with `analysis` | The post is a reposted quote and the poster adds no claim of their own. Wu's quote does name specific incidents (falling down, complaining about the lights, touching the net tape) behind his view that the match was not a "pure" competition, but that argument is Wu's, not the poster's. Same rule as the Djokovic quote: a quotation repeating someone else's argument is not the poster's evidence-backed claim. Re-open only if the poster endorses or argues it in a body or caption |
+| R13 | Title: "What an amazing answer to an amazing question" plus a clapping emoji (Big 3 flair; a Djokovic press-conference video; no body text visible in my screenshot) | https://www.reddit.com/r/tennis/s/TytAry3m8l (confirmed) | `reaction` (accepted) | The poster's own title expresses admiration for a specific moment. It makes no general claim and gives no evidence. Closest alternative is `hot_take` ("amazing" is an evaluation), but by the priority rule an enthusiastic response to one moment is `reaction`, while a ranking or general claim would be `hot_take` |
+| R14 | Title: "How is the Men's Tennis GOAT debate even a debate now?" with an image of a Djokovic/Nadal/Federer major-record comparison table. Posted in **r/billsimmons**, about 2 years ago, not r/tennis | https://www.reddit.com/r/billsimmons/s/pA1w2Xzk1o | **Excluded** (wrong community) | Outside my community, so it cannot be an example for this project however well it fits. On content alone it would likely be `analysis`: the title makes a claim and the table of Grand Slams, weeks at No. 1 and head-to-heads is the load-bearing evidence. Useful only as a model of the kind of r/tennis post to look for |
+
+**Accepted examples per label (needs 2 each):**
+
+| Label | Accepted | Provisional (not counted) | Gap |
+|---|---|---|---|
+| `analysis` | 0 | none | Need 2 |
+| `hot_take` | 2, both weak (R1, R9) | none | None, but a clearer example is worth finding |
+| `reaction` | 2 (R4, R13) | R3, R11 | None (complete) |
 
 ### The hardest boundary
 
-**Which two labels:**
+**Which two labels:** `analysis` vs `hot_take`.
 
-**The decision rule I used every time:**
-<!-- e.g. "If the post names a specific checkable fact, it's `analysis`, even
-     if the tone is heated." -->
+**Real borderline post:** R9, https://www.reddit.com/r/tennis/s/gCUUfQKWNE, an image of a Djokovic quote saying women's tennis is the most successful and best-paid women's sport globally (described by me; wording not independently verified).
 
+**Case for `analysis`:** the quote makes a claim that sounds factual and checkable (revenue, pay and success compared across women's sports), so a reader could verify it.
 
+**Case for `hot_take`:** the post states a broad, confident judgment, and no specific figure, comparison or event is given to back it. The claim itself is the fact, and nothing is offered as support.
+
+**The decision rule I used every time:** Checkable evidence must meaningfully support the post's main claim for the post to qualify as `analysis`. A claim that merely sounds factual, or a quotation repeating someone else's claim, is not support. Without supporting evidence, a confident general claim is `hot_take`.
+
+**Applied to R9:** no supporting evidence is shown, so it would be `hot_take`. Caveat: if the post's own title or text adds a figure, this should be re-checked, and if the post only presents the quote as news without endorsing it, it should be excluded instead.
+
+### Stress test
+
+Eight fictional posts are in `data/stress_test_posts.md`. They are not real Reddit posts and are kept separate from the examples above. They test factual reporting, evidence-backed analysis, unsupported opinions, and emotional or humorous reactions. My classifications go in `data/stress_test_responses.csv`.
+
+### The 70% limit
+
+The notebook's dataset check stops training if any single label is more than 70% of the data, which means at most 140 of 200 posts. With no catch-all, the risk is that one label, most likely `hot_take` or `reaction`, grows because it is easy to find. I will count each label as I collect and sample on purpose for the thin ones. The check itself is unchanged.
 
 ---
 
