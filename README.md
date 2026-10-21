@@ -115,6 +115,23 @@ My scope is posts that make a claim, take a stance or express a response. A post
 - **Excluded posts are logged.** I keep a short list of what I skipped and why, so the Dataset section can say how I sampled. If I find myself excluding most of what I read, the scope is too narrow and I should rethink it, not relabel the exclusions.
 - **Two-label ambiguity is different.** A post that genuinely fits two of the three labels is resolved by the priority rule above, not excluded.
 
+**Exclusion log (dataset batches, Tennis Warehouse forum threads):**
+
+| Post | URL | Why it was excluded |
+|---|---|---|
+| "Is this sandbagging or fair game?" | https://tt.tennis-warehouse.com/index.php?threads/is-this-sandbagging-or-fair-game.805059/ | A request for advice about whether to enter a tournament. It makes no claim, takes no stance and expresses no emotion or humor, so it fits none of the three labels. |
+| "Tennis Warehouse playtest: Solinco Chroma prototype" | https://tt.tennis-warehouse.com/index.php?threads/tennis-warehouse-playtest-solinco-chroma-prototype.804637/ | An announcement of a racquet playtest program, with dates and rules. It reports information and argues nothing, so it fits none of the three labels. |
+| "My life as a UTR 3" | https://tt.tennis-warehouse.com/index.php?threads/my-life-as-a-utr-3.805372/ | Rejected at my review. A joking request for cramp advice, not a clear fit for any label. |
+| "Tsitsipas blacked out racket!" | https://tt.tennis-warehouse.com/index.php?threads/tsitsipas-blacked-out-racket.781874/ | Rejected at my review. A short observation with a guess about the brand, too thin to count as a judgment. |
+| "Zverev vs Medvedev - Who is now the greatest of their generation?" (audit row 66) | https://tt.tennis-warehouse.com/index.php?threads/zverev-vs-medvedev-who-is-now-the-greatest-of-their-generation.800564/ | Audit exclusion: Full text lists title counts, finals and weeks at #1 for two players and ends 'Who is greater for you?'. The poster states no claim of their own. |
+| "By Clinching the Prestigious YE1, where does Zverev stand compared to Murray, Roddick, Safin, Hewitt and Stanimal ?" (audit row 84) | https://tt.tennis-warehouse.com/index.php?threads/by-clinching-the-prestigious-ye1-where-does-zverev-stand-compared-to-murray-roddick-safin-hewitt-and-stanimal.805138/ | Audit exclusion: Full text is a vote request that ranks five other players but never says where Zverev stands. No claim about the question asked. |
+| "Who has a superior peak between over35 years old Djokovic, Sinner and Alcaraz?" (audit row 88) | https://tt.tennis-warehouse.com/index.php?threads/who-has-a-superior-peak-between-over35-years-old-djokovic-sinner-and-alcaraz.805173/ | Audit exclusion: Full text gives three stat lines and asks which peak is superior. No conclusion. |
+| "Has Zverev now surpassed Wawrinka all-time?" (audit row 153) | https://tt.tennis-warehouse.com/index.php?threads/has-zverev-now-surpassed-wawrinka-all-time.804053/ | Audit exclusion: Full text is a two-player stat table and the question 'Has Zverev now surpassed Wawrinka?'. No answer or claim. |
+| "Djokovic in his 20s or in his 30s - which was greater?" (audit row 157) | https://tt.tennis-warehouse.com/index.php?threads/djokovic-in-his-20s-or-in-his-30s-which-was-greater.804909/ | Audit exclusion: Full text is a 20s-versus-30s stat table and the question 'which was greater?'. No answer or claim. |
+| "During the Big 3 slam years, which surface had the longest periods of the best players playing on their clearly favoured surface. Hard or Clay?" (audit row 191) | https://tt.tennis-warehouse.com/index.php?threads/during-the-big-3-slam-years-which-surface-had-the-longest-periods-of-the-best-players-playing-on-their-clearly-favoured-surface-hard-or-clay.804563/ | Audit exclusion: Full text gives a method and a table, then 'I'll leave you to draw your own conclusions'. No claim. |
+
+Four other posts were dropped from a batch for practical reasons, not because of their content: three had only a title and no body text, and one (Stanford Men's Tennis) had a URL already used by an existing dataset row. They are not exclusions on scope grounds.
+
 ### Posts reviewed so far (all provisional, none independently retrieved)
 
 | ID | Post (as supplied by me) | Link | Handling | Why |
@@ -171,45 +188,83 @@ The notebook's dataset check stops training if any single label is more than 70%
 <!-- Where you collected from, how you labelled, your counts, and three hard
      cases. -->
 
-**Where the posts came from:**
+**Where the posts came from:** real, public tennis discussions from the Tennis Warehouse (Talk Tennis) message board, `tt.tennis-warehouse.com`. All 200 posts in `labels.csv` come from that one source. No Reddit post is in the dataset: automated requests to Reddit were refused (for example a `403` on its JSON feed), and I did not try to get around that. (The Reddit links in the Label Taxonomy section belong to the Milestone 2 examples.) Every post's URL is in `data/post_sources.csv`, in the same row order as `labels.csv`, and no URL appears twice.
 
-**How I labelled them:** <!-- Cold first? Pre-labelled with AI and corrected?
-Say so plainly — the disclosure is required, not penalised. -->
+- **First 20 posts (mine, `cold`).** I chose and pasted these myself.
+- **Other 180 posts (collected with Claude Code).** A script read public forum listings and each thread's opening post, at about one request per second, with no login. It covered General Pro Player Discussion, Former Pro Player Talk, College Tennis Talk, Adult League & Tournament Talk, Odds & Ends, Tennis Tips/Instruction, Pros' Racquets and Gear, and Health & Fitness. That gave 1309 candidate threads, and I did not use anything I could not read. Each row's `text` is the thread title followed by the opening post's text, with whitespace collapsed. Posts are not edited, shortened or paraphrased. In the later label audit, all 180 of these threads were re-fetched and each saved text matched the live opening post exactly. The six replacement posts added during the audit were checked the same way.
+- **Where the 180 came from (after the audit):**
+  - General Pro Player Discussion: 122
+  - Former Pro Player Talk: 25
+  - College Tennis Talk: 15
+  - Adult League & Tournament Talk: 13
+  - Pros' Racquets and Gear: 3
+  - Tennis Tips/Instruction: 1
+  - Health & Fitness: 1
 
-**Counts per label:**
+**How I labelled them:**
+
+- **First 20: cold, by me.** I labelled these myself without AI suggestions. They are marked `cold` and have not been edited since.
+- **Other 180: labelled by Claude Code, not yet checked by me.** Claude Code read each post against `label_definitions.txt` and chose a label. I have **not** checked these 180 labels row by row, although I made the audit decisions listed below. Their note is `pre-labelled, unchecked`. When I review a row and agree, I change its note to `pre-labelled, checked`, and if I change the label I will note that. Until then, treat these labels as AI suggestions. This is a disclosure, not a claim of human review.
+- **What was left out.** Of the 1309 candidate threads, Claude Code reviewed the opening of most of them: roughly the first 200-420 characters of each, and it skipped very short ones on the first pass. The last 130 or so candidates from the College Tennis Talk pages were collected but never read. Reviewed threads that were questions, polls, ranking games, news and video links, equipment questions, advice requests, forum chit-chat or non-tennis threads were left out, since they make no claim and show no emotion (the exclude-don't-force rule). Claude Code did not keep a per-post log of every skipped thread, so the exclusion log above lists only the individually reviewed cases. Because the labels were chosen from the opening of each post, a long post could have changed direction later. 250 candidates were labelled and 180 were used. The other 70 were dropped for length (a few were over 5,000 characters), for weak or link-only text, or to keep the label mix balanced. No label was changed in order to balance the data.
+- **Label audit (`data/label_audit.csv`).** Claude Code re-read the full text of all 180 rows and recommended 14 label changes and 10 exclusion reviews. The report keeps its original recommendations in `data/label_audit_proposals_original.csv`, and the dataset as it stood before the audit is in `data/labels_200_before_audit.csv`. I then decided: 8 labels changed (rows 36, 61, 95, 122, 156, 175 and 182 to `hot_take`; row 115 to `analysis`); 6 changes kept as they were for now, marked borderline (rows 65, 83, 106, 135, 181, 187); 6 rows excluded because the full text states no claim (rows 66, 84, 88, 153, 157, 191, listed in the exclusion log above); and 4 rows kept after full-text review as borderline (rows 51, 105, 189, 195). Six replacement posts, all public, with their full text, URL and uniqueness checked, keep the total at 200. Row numbers in the audit are the numbers in the 200-row file before the audit; the audit also gives each row's number in the current `labels.csv`.
+- **Borderline posts.** 47 of the 180 were flagged borderline when labelled; after the audit, 10 rows are marked "reviewed, borderline" and the rest of the 47 were reviewed without a change. The priority rule in the Label Taxonomy section decides ties: checkable evidence that meaningfully supports the main claim makes it `analysis`; a judgment or prediction without such support makes it `hot_take`; an emotional or playful response makes it `reaction`.
+
+**How the split works:** I do not split the data. `labels.csv` stays as one file, and the notebook's `split_dataset` makes the stratified 70/15/15 split, redrawn for each seed (42, 7, 2024). I ran that function on this file: each seed gives 139 train, 31 validation and 30 test rows, with no text shared between any two splits, and the test split has 10 `analysis`, 12 `hot_take` and 8 `reaction` rows (checked again after the audit). I did not train a model.
+
+**Counts per label (200 posts):**
 
 | Label | Count | Share |
 |---|---|---|
-|  |  |  |
-|  |  |  |
-|  |  |  |
-| **Total** |  | 100% |
+| `analysis` | 69 | 34.5% |
+| `hot_take` | 78 | 39.0% |
+| `reaction` | 53 | 26.5% |
+| **Total** | 200 | 100% |
 
-**Three hard cases**
+No label is above 70% (the assignment limit) or above 50% (my criterion 3), so the balance requirement is met. `reaction` is the smallest class, so its test split has only 8 rows and its F1 will probably vary a lot between seeds. The cold 20 are 4 `analysis`, 9 `hot_take` and 7 `reaction`. Before the audit the counts were 76, 73 and 51.
 
-<!-- Any post that made you pause: what it was, which two labels it could have
-     been, and what you chose. These are worth more than the easy 190. -->
+**Validation (run on the final files):** `python validate_labels.py` reports 200 labelled rows, 20 `cold`, and no problems. A separate check found 200 rows in `labels.csv` and 200 in `data/post_sources.csv`, every row with exactly the right number of columns, no empty fields, each source preview matching the start of its row's text, and no duplicate URLs or near-duplicate texts. The audit report's final labels and source URLs also match `labels.csv` row by row, and the 20 `cold` rows are byte-for-byte unchanged from before the audit. The validator checks the format and balance, not whether a label is right.
 
-**1.**
-> *The post:*
->
-> *Could have been:*
->
-> *I chose, because:*
+**Four hard cases** (all are real rows in `labels.csv`; labels are Claude Code's, pending my review, and the audit left all four unchanged)
 
-**2.**
-> *The post:*
+**1. Six Kings Slam: exhibition or real event?** https://tt.tennis-warehouse.com/index.php?threads/should-we-consider-the-six-kings-slam-an-exhibition-event-or-an-alternative-pro-circuit-event.792256/
+> *The post:* "considering the HUGE money incentive to win it, I think it should be seen as a professional invitational event... there's an actual betting market for it, which generally isn't the case for 'true' exhibition events." It then guesses that the organizers play it down as an exhibition so the ATP won't block it.
 >
-> *Could have been:*
+> *Could have been:* `hot_take` or `analysis`.
 >
-> *I chose, because:*
+> *Labelled `analysis`, because:* two checkable facts (the prize money and the betting market) do support the main claim. The guess about the organizers' motives is unsupported, so it is borderline.
 
-**3.**
-> *The post:*
+**2. "Are wins that tier 2s of the past got against the big 3 overrated?"** https://tt.tennis-warehouse.com/index.php?threads/due-to-nostalgia-bias-are-wins-that-tier-2s-of-the-past-got-against-the-big-3-sometimes-overrated-compared-to-current-players.805277/
+> *The post:* Argues that Berdych's three Slam wins over Djokovic and Nadal came against "2010/2017 Djokovic and 2015 Nadal", which is "the same tier if not lower than Shelton beating Alcaraz at the USO".
 >
-> *Could have been:*
+> *Could have been:* `analysis` or `hot_take`.
 >
-> *I chose, because:*
+> *Labelled `hot_take`, because:* it names specific matches, but the only thing that links them to the claim is the poster's own ranking of how good those opponents were, which is a judgment and not checkable evidence.
+
+**3. "Does this graph prove Djokovic has the highest peak?"** https://tt.tennis-warehouse.com/index.php?threads/does-this-graph-prove-djokovic-has-the-highest-peak.805344/
+> *The post:* Cites 2011-12 numbers (Slams: Djokovic 4, Nadal 2, Federer 1, Murray 1; big titles: Djokovic 13, Federer 6; year-end #1: Djokovic 2, others 0), then asks whether that proves his peak was the highest ever.
+>
+> *Could have been:* `analysis`, or excluded because the closing line is a question.
+>
+> *Labelled `analysis`, because:* the figures are specific and checkable and they support the claim of a dominant 2011-12. The question is the claim restated, so I did not exclude it. Whether they prove "highest ever" is a bigger claim than the figures support.
+
+**4. "A tennis version of the fairy tale 'The Emperor's New Clothes'"** https://tt.tennis-warehouse.com/index.php?threads/a-tennis-version-of-the-fairy-tale-the-emperors-new-clothes.805373/
+> *The post:* Retells the fairy tale and pastes a news story of a boy telling Bublik he is better than Sinner "because you do not use doping".
+>
+> *Could have been:* `reaction` or `hot_take`.
+>
+> *Labelled `reaction`, because:* the poster's own words are a playful parable, with no argument. It also insinuates that Sinner doped, so it could be read as a `hot_take`. I need to check this one.
+
+**Pending suggestions from the earlier batch (not in `labels.csv`):** these two stay out until I approve them.
+- *Race to Turin 2026* (https://tt.tennis-warehouse.com/index.php?threads/race-to-turin-2026.802727/). Recommendation: `hot_take`. The 390-point gap is checkable but only shows the race is open. The picks and "Medvdev will fall off, he's in terrible form" are predictions with no evidence.
+- *Alcaraz/Sinner vs. Federer* (https://tt.tennis-warehouse.com/index.php?threads/would-alcaraz-sinner-really-be-able-to-challenge-this-federer.805323/). Recommendation: `hot_take`. The body asserts two judgments (Federer's level and the effect of racquet technology) with no results behind them.
+
+**Limitations and remaining work**
+
+- **I have not checked 180 of the 200 labels.** Claude Code applied the definitions and re-read every row in the audit, but the labels are still its judgments. 10 rows are marked borderline (65, 83, 106, 135, 181, 187, 51, 105, 189, 195, by their numbers in the audit), and several more depend on reading sarcasm or humor (24, 156, 182). I should review them, and change a row's note to `pre-labelled, checked` only after I have. Reviewing could shift the counts.
+- **One source.** Every post is from one forum, and many of the 180 are about the Big 3, GOAT debates and 2026 results, so the model may learn forum-specific habits and may not transfer to other sites.
+- **Evidence-backed posts are a big class.** Many `analysis` posts are lists of statistics. A model may learn "has numbers means analysis", which is only partly what the definition means.
+- **Labelling the posts partly from the title.** Each text starts with the thread title. Some titles are questions, which are not judgments by themselves.
+- **I haven't trained anything.** The split was only tested on the dataset, and I have not run the notebook's training or evaluation sections.
 
 ---
 
@@ -447,7 +502,7 @@ learned:**
        [ ] No label above 70%
        [ ] All five unit 5 sections have real content
        [ ] Label Taxonomy includes the decision rule for your hardest boundary
-       [ ] The Dataset includes three hard cases
+       [ ] The Dataset includes four hard cases (the assignment minimum is three)
        [ ] results.json and test_split.csv committed (the notebook does this)
        [ ] At least four new commits
        [ ] Repository URL submitted — WRITE IT DOWN
