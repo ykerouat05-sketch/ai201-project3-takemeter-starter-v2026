@@ -39,9 +39,7 @@
 
 ## What This Does
 
-<!-- Your community, and what your classifier sorts posts into. Three or four
-     sentences. -->
-
+TakeMeter is a classifier for public tennis-discussion posts. It sorts each post into one of three labels: `analysis` (a claim backed by specific, checkable evidence), `hot_take` (a confident judgment or prediction without meaningful support) or `reaction` (an emotional or humorous response). The community is the Tennis Warehouse (Talk Tennis) message board; the 200 posts in `labels.csv` all come from it. The model is `distilbert-base-uncased` fine-tuned on those posts. Only one training run (seed 42, on CPU) has been done so far; the three-seed experiments, the baseline comparison and the diagnosis belong to the next unit.
 
 
 ---
@@ -66,9 +64,9 @@ the post actually expresses a judgment or prediction.
 
 **Exclude when:** the post only reports a fact, headline, event or quotation with no argument built on it; the fact is decoration on a conclusion the writer had already reached; the "evidence" is general reasoning with nothing checkable in it.
 
-**Example 1:** INCOMPLETE. No candidate so far.
+**Example 1** (a dataset post, not a Reddit one; its label is Claude Code's and is not yet checked by me): "What do you make of Elena Rybakina's poor record in finals?", https://tt.tennis-warehouse.com/index.php?threads/what-do-you-make-of-elena-rybakinas-poor-record-in-finals.747487/. The post lists the finals records of 16 active major winners (Raducanu 1-0 down to Rybakina 4-9, 30.8%) to support the claim that she has the worst record among them. The figures are checkable and carry the argument. It ends with a question, but the claim is clear from the table.
 
-**Example 2:** INCOMPLETE. No candidate so far.
+**Example 2** (same caveat): "Djokovic-Federer rivalry since 2012 YEC", https://tt.tennis-warehouse.com/index.php?threads/djokovic-federer-rivalry-since-2012-yec.710111/. The poster lists 13 named matches, "Djokovic has beaten Federer in 12 of the 13 biggest matches they played", and concludes "That's brutal." The list is the evidence for the claim.
 
 ### `hot_take`
 
@@ -155,7 +153,7 @@ Four other posts were dropped from a batch for practical reasons, not because of
 
 | Label | Accepted | Provisional (not counted) | Gap |
 |---|---|---|---|
-| `analysis` | 0 | none | Need 2 |
+| `analysis` | 2 (dataset posts above) | none | None, but both labels are Claude Code's and not yet checked by me |
 | `hot_take` | 2, both weak (R1, R9) | none | None, but a clearer example is worth finding |
 | `reaction` | 2 (R4, R13) | R3, R11 | None (complete) |
 
@@ -179,14 +177,11 @@ Eight fictional posts are in `data/stress_test_posts.md`. They are not real Redd
 
 ### The 70% limit
 
-The notebook's dataset check stops training if any single label is more than 70% of the data, which means at most 140 of 200 posts. With no catch-all, the risk is that one label, most likely `hot_take` or `reaction`, grows because it is easy to find. I will count each label as I collect and sample on purpose for the thin ones. The check itself is unchanged.
+The notebook's dataset check stops training if any single label is more than 70% of the data, which means at most 140 of 200 posts. With no catch-all, the risk is that one label, most likely `hot_take` or `reaction`, grows because it is easy to find. I counted each label as I collected and sampled on purpose for the thin ones. In the final 200 posts the largest label is `hot_take` at 39.0%. The check itself is unchanged.
 
 ---
 
 ## The Dataset
-
-<!-- Where you collected from, how you labelled, your counts, and three hard
-     cases. -->
 
 **Where the posts came from:** real, public tennis discussions from the Tennis Warehouse (Talk Tennis) message board, `tt.tennis-warehouse.com`. All 200 posts in `labels.csv` come from that one source. No Reddit post is in the dataset: automated requests to Reddit were refused (for example a `403` on its JSON feed), and I did not try to get around that. (The Reddit links in the Label Taxonomy section belong to the Milestone 2 examples.) Every post's URL is in `data/post_sources.csv`, in the same row order as `labels.csv`, and no URL appears twice.
 
@@ -209,7 +204,7 @@ The notebook's dataset check stops training if any single label is more than 70%
 - **Label audit (`data/label_audit.csv`).** Claude Code re-read the full text of all 180 rows and recommended 14 label changes and 10 exclusion reviews. The report keeps its original recommendations in `data/label_audit_proposals_original.csv`, and the dataset as it stood before the audit is in `data/labels_200_before_audit.csv`. I then decided: 8 labels changed (rows 36, 61, 95, 122, 156, 175 and 182 to `hot_take`; row 115 to `analysis`); 6 changes kept as they were for now, marked borderline (rows 65, 83, 106, 135, 181, 187); 6 rows excluded because the full text states no claim (rows 66, 84, 88, 153, 157, 191, listed in the exclusion log above); and 4 rows kept after full-text review as borderline (rows 51, 105, 189, 195). Six replacement posts, all public, with their full text, URL and uniqueness checked, keep the total at 200. Row numbers in the audit are the numbers in the 200-row file before the audit; the audit also gives each row's number in the current `labels.csv`.
 - **Borderline posts.** 47 of the 180 were flagged borderline when labelled; after the audit, 10 rows are marked "reviewed, borderline" and the rest of the 47 were reviewed without a change. The priority rule in the Label Taxonomy section decides ties: checkable evidence that meaningfully supports the main claim makes it `analysis`; a judgment or prediction without such support makes it `hot_take`; an emotional or playful response makes it `reaction`.
 
-**How the split works:** I do not split the data. `labels.csv` stays as one file, and the notebook's `split_dataset` makes the stratified 70/15/15 split, redrawn for each seed (42, 7, 2024). I ran that function on this file: each seed gives 139 train, 31 validation and 30 test rows, with no text shared between any two splits, and the test split has 10 `analysis`, 12 `hot_take` and 8 `reaction` rows (checked again after the audit). I did not train a model.
+**How the split works:** I do not split the data. `labels.csv` stays as one file, and the notebook's `split_dataset` makes the stratified 70/15/15 split, redrawn for each seed (42, 7, 2024). The seed-42 split that the notebook wrote to `test_split.csv` has 139 train, 31 validation and 30 test rows, with no text shared between splits; the test split has 11 `analysis`, 11 `hot_take` and 8 `reaction` rows. (An earlier version of this paragraph said 10, 12 and 8. That came from a check of mine that stripped the stray leading spaces from the labels of the 20 `cold` rows before splitting. The notebook does not strip them before splitting, so its split differs. The numbers here are from the notebook's own `test_split.csv`.)
 
 **Counts per label (200 posts):**
 
@@ -264,24 +259,26 @@ No label is above 70% (the assignment limit) or above 50% (my criterion 3), so t
 - **One source.** Every post is from one forum, and many of the 180 are about the Big 3, GOAT debates and 2026 results, so the model may learn forum-specific habits and may not transfer to other sites.
 - **Evidence-backed posts are a big class.** Many `analysis` posts are lists of statistics. A model may learn "has numbers means analysis", which is only partly what the definition means.
 - **Labelling the posts partly from the title.** Each text starts with the thread title. Some titles are questions, which are not judgments by themselves.
-- **I haven't trained anything.** The split was only tested on the dataset, and I have not run the notebook's training or evaluation sections.
+- **Whitespace in the `cold` rows' labels (unresolved).** The 20 `cold` rows were entered with a space after each comma, so their labels are stored as, for example, ` hot_take`, and their notes as ` cold`. I left `labels.csv` as it is because those rows must stay unchanged. Training and `baseline.py` strip labels before using them, so the training run and its metrics are not affected. But the notebook's `split_dataset` stratifies on the raw value, so it uses six label groups instead of three: the 20 `cold` rows are always split 14 train, 3 validation and 3 test, and the seed-42 test split is 11/11/8 where a normalized split would give 10/12/8. The notebook's dataset check also prints six label rows and warns "Only 4 examples of ' analysis'". Three rows of `test_split.csv` carry the leading space. The saved seed-42 split and `results.json` are kept as they are, and I have not decided whether to normalize in the notebook before the three-seed run. Doing so would change every split and require retraining.
+- **One training run so far.** I trained once, with seed 42 on CPU, in Milestone 5. The three-seed run, the baseline and any diagnosis or improvement belong to the next unit and have not been done.
 
 ---
 
 ## The Training Run
 
-<!-- Your starting model, your settings, and anything you changed and why. -->
+**Base model:** `distilbert-base-uncased`, fine-tuned for three-label classification. This is the notebook's `BASE_MODEL` as committed; `results.json` does not record it.
 
-**Base model:**
+**Settings:** seed 42, 3 epochs, learning rate 2e-5, batch size 16 (the notebook's committed values; only the seed and max length are recorded in `results.json`), and a maximum of 128 tokens per post (`max_length` in `results.json`; longer posts are truncated).
 
-**Settings:** <!-- epochs, learning rate, batch size, seed -->
+**Device:** CPU (`device: cpu`, `device_name: CPU`, torch `2.14.1+cpu`, as recorded in `results.json`). The notebook warns that results can differ on other hardware even with the same seed. I have not tested that, so these numbers describe this CPU run only.
 
-**Anything I changed from the defaults, and why:**
+**Anything I changed from the defaults, and why:** nothing. `takemeter.ipynb` is unchanged from the version in the repository's history, so these are the notebook's defaults.
 
-**Split sizes:** <!-- train / val / test, and per-label counts in the test
-split. If a label had fewer than about 8 in test, say so — it explains a lot
-of next unit's variance. -->
+**Split sizes:** 139 train, 31 validation, 30 test (70/15/15, stratified, seed 42). Test split by label: 11 `analysis`, 11 `hot_take`, 8 `reaction`. `reaction` has the fewest examples in test, so its scores will vary a lot between seeds. (The stratification caveat for the `cold` rows is listed under Limitations above.)
 
+**Results (one run: seed 42, 30 test posts):** accuracy 0.567 (17 of 30) and macro F1 0.440. Per-class F1: `analysis` 0.750 (n=11), `hot_take` 0.571 (n=11), `reaction` 0.000 (n=8). `results.json` also records precision, recall, a confusion matrix and confidence figures. These come from one seed and a 30-post test set, so they show what this run scored and are not evidence that the model is reliable. I have not yet run the other two seeds, compared against the baseline, built or read the confusion matrix, or diagnosed these numbers. That is the next unit's work.
+
+**Saved artifacts:** `results.json` (valid JSON, metrics consistent with its confusion matrix) and `test_split.csv` (the 30 held-out posts; it matches the notebook's own seed-42 split of `labels.csv`) were written by the notebook and committed in `2cc7427`, "Save Takemeter training results". `labels.csv` was committed earlier in `9db4e45`.
 
 
 ---
@@ -295,19 +292,19 @@ of next unit's variance. -->
      workflow and disclosing it costs you nothing. Not disclosing it is the
      problem. -->
 
-**Moment 1**
+**Moment 1: the label audit (Milestone 4)**
 
-- *What I asked for:*
-- *What came back:*
-- *What I changed:*
+- *What I asked for:* After Claude Code had collected 180 posts and given them labels from the first few hundred characters of each, I asked it to re-read the full saved text of every one against `label_definitions.txt`, and to propose label changes and exclusions without editing the dataset.
+- *What came back:* A report (`data/label_audit.csv`) with a recommendation for each row: keep 156, change 14, send 10 to exclusion review, with a confidence level and a reason. It also re-fetched every source thread and found each saved text matched the live post.
+- *What I changed:* I accepted 8 of the 14 changes, told it to keep 6 for now (marked borderline), excluded 6 of the 10 review candidates after it confirmed from the full text that they state no claim, and had it add 6 verified replacement posts so the dataset stayed at 200. I did not accept the remaining labels as checked.
 
-**Moment 2**
+**Moment 2: how many labels there should be (Milestone 2)**
 
-- *What I asked for:*
-- *What came back:*
-- *What I changed:*
+- *What I asked for:* Whether a fourth catch-all label (`other`) would work for posts that fit none of my three labels, and what it would affect.
+- *What came back:* An explanation of the implications of a fourth label for the definitions, the label list and the balance checks.
+- *What I changed:* I decided against a catch-all. I kept exactly three labels, wrote an exclusion rule so a post that fits none is left out and not forced into a label, and updated the README and `label_definitions.txt` to match.
 
-**Pre-labelling disclosure:**
+**Pre-labelling disclosure:** The first 20 labels in `labels.csv` (note `cold`) are mine and were made without AI suggestions. The other 180 posts were collected and pre-labelled by Claude Code. I have **not** reviewed those 180 labels one by one, so each carries the note `pre-labelled, unchecked`, and I will change a note to `pre-labelled, checked` only for rows I have reviewed myself. The audit above is Claude Code's second pass over its own labels, plus my decisions on its recommendations. It is not an independent human check of every row. Two earlier suggestions (Race to Turin 2026, and Alcaraz/Sinner vs. Federer) were never added to `labels.csv`.
 
 <!-- ═══════════════════════ UNIT 6 — THE TEST ═══════════════════════
 
@@ -315,6 +312,8 @@ of next unit's variance. -->
      ═══════════════════════════════════════════════════════════════════ -->
 
 ---
+
+> **Status: pending (unit 6).** Nothing below has been done. Only the single seed-42 run described in The Training Run exists. The baseline comparison, the three-seed runs, the confusion matrix, the verdicts and diagnoses, the agreement report and the improvement are all still to do.
 
 ## Baseline vs. Trained
 
@@ -496,14 +495,14 @@ learned:**
 
      SUBMISSION CHECKLIST — unit 5
 
-       [ ] criteria.md has five numbered criteria, each naming a NUMBER
-       [ ] Each has a reason underneath tied to your data or taxonomy
-       [ ] labels.csv: at least 150 rows, text/label/note, ONE file not split
-       [ ] No label above 70%
+       [x] criteria.md has five numbered criteria, each naming a NUMBER
+       [x] Each has a reason underneath tied to your data or taxonomy
+       [x] labels.csv: at least 150 rows, text/label/note, ONE file not split
+       [x] No label above 70%
        [ ] All five unit 5 sections have real content
-       [ ] Label Taxonomy includes the decision rule for your hardest boundary
-       [ ] The Dataset includes four hard cases (the assignment minimum is three)
-       [ ] results.json and test_split.csv committed (the notebook does this)
+       [x] Label Taxonomy includes the decision rule for your hardest boundary
+       [x] The Dataset includes four hard cases (the assignment minimum is three)
+       [x] results.json and test_split.csv committed (the notebook does this)
        [ ] At least four new commits
        [ ] Repository URL submitted — WRITE IT DOWN
 
