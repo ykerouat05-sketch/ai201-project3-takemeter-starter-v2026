@@ -39,7 +39,7 @@
 
 ## What This Does
 
-TakeMeter is a classifier for public tennis-discussion posts. It sorts each post into one of three labels: `analysis` (a claim backed by specific, checkable evidence), `hot_take` (a confident judgment or prediction without meaningful support) or `reaction` (an emotional or humorous response). The community is the Tennis Warehouse (Talk Tennis) message board; the 200 posts in `labels.csv` all come from it. The model is `distilbert-base-uncased` fine-tuned on those posts. Only one training run (seed 42, on CPU) has been done so far; the baseline comparison is done, and the three-seed experiments and the diagnosis are still pending.
+TakeMeter is a classifier for public tennis-discussion posts. It sorts each post into one of three labels: `analysis` (a claim backed by specific, checkable evidence), `hot_take` (a confident judgment or prediction without meaningful support) or `reaction` (an emotional or humorous response). The community is the Tennis Warehouse (Talk Tennis) message board; the 200 posts in `labels.csv` all come from it. The model is `distilbert-base-uncased` fine-tuned on those posts. Training has been run on CPU with three seeds (42, 7 and 2024); the baseline comparison is done, and the diagnosis is still pending.
 
 
 ---
@@ -260,7 +260,7 @@ No label is above 70% (the assignment limit) or above 50% (my criterion 3), so t
 - **Evidence-backed posts are a big class.** Many `analysis` posts are lists of statistics. A model may learn "has numbers means analysis", which is only partly what the definition means.
 - **Labelling the posts partly from the title.** Each text starts with the thread title. Some titles are questions, which are not judgments by themselves.
 - **Whitespace in the `cold` rows' labels (unresolved).** The 20 `cold` rows were entered with a space after each comma, so their labels are stored as, for example, ` hot_take`, and their notes as ` cold`. I left `labels.csv` as it is because those rows must stay unchanged. Training and `baseline.py` strip labels before using them, so the training run and its metrics are not affected. But the notebook's `split_dataset` stratifies on the raw value, so it uses six label groups instead of three: the 20 `cold` rows are always split 14 train, 3 validation and 3 test, and the seed-42 test split is 11/11/8 where a normalized split would give 10/12/8. The notebook's dataset check also prints six label rows and warns "Only 4 examples of ' analysis'". Three rows of `test_split.csv` carry the leading space. The saved seed-42 split and `results.json` are kept as they are, and I have not decided whether to normalize in the notebook before the three-seed run. Doing so would change every split and require retraining.
-- **One training run so far.** I trained once, with seed 42 on CPU, in Milestone 5. The baseline comparison (Milestone 1) has since been run, and is below. The three-seed run, the diagnosis and any improvement are still pending.
+- **Three training runs so far, no diagnosis.** I trained with seed 42 on CPU in Milestone 5, then with seeds 42, 7 and 2024 in Milestone 2 (see Run Log — Before). The baseline comparison (Milestone 1) is below. The diagnosis and any improvement are still pending.
 
 ---
 
@@ -276,7 +276,7 @@ No label is above 70% (the assignment limit) or above 50% (my criterion 3), so t
 
 **Split sizes:** 139 train, 31 validation, 30 test (70/15/15, stratified, seed 42). Test split by label: 11 `analysis`, 11 `hot_take`, 8 `reaction`. `reaction` has the fewest examples in test, so its scores will vary a lot between seeds. (The stratification caveat for the `cold` rows is listed under Limitations above.)
 
-**Results (one run: seed 42, 30 test posts):** accuracy 0.567 (17 of 30) and macro F1 0.440. Per-class F1: `analysis` 0.750 (n=11), `hot_take` 0.571 (n=11), `reaction` 0.000 (n=8). `results.json` also records precision, recall, a confusion matrix and confidence figures. These come from one seed and a 30-post test set, so they show what this run scored and are not evidence that the model is reliable. I have not yet run the other two seeds, built or read the confusion matrix, or diagnosed these numbers. The baseline comparison is in the next section.
+**Results (one run: seed 42, 30 test posts):** accuracy 0.567 (17 of 30) and macro F1 0.440. Per-class F1: `analysis` 0.750 (n=11), `hot_take` 0.571 (n=11), `reaction` 0.000 (n=8). `results.json` also records precision, recall, a confusion matrix and confidence figures. These come from one seed and a 30-post test set, so they show what this run scored and are not evidence that the model is reliable. The other two seeds, the confusion matrix and the baseline comparison are further down. I have not diagnosed these numbers.
 
 **Saved artifacts:** `results.json` (valid JSON, metrics consistent with its confusion matrix) and `test_split.csv` (the 30 held-out posts; it matches the notebook's own seed-42 split of `labels.csv`) were written by the notebook and committed in `2cc7427`, "Save Takemeter training results". `labels.csv` was committed earlier in `9db4e45`.
 
@@ -313,7 +313,7 @@ No label is above 70% (the assignment limit) or above 50% (my criterion 3), so t
 
 ---
 
-> **Status (unit 6).** Only Milestone 1 (the baseline) has been done: see Baseline vs. Trained below. The three-seed runs, the confusion matrix, the verdicts and diagnoses, the agreement report and the improvement are still pending. All trained numbers here come from the single seed-42 run.
+> **Status (unit 6).** Milestone 1 (the baseline) and Milestone 2 (three seeds and the confusion matrix) have been run: see Baseline vs. Trained and Run Log — Before below. The verdicts and diagnoses, the agreement report and the improvement are still pending. The Baseline vs. Trained comparison uses the seed-42 run only.
 
 ## Baseline vs. Trained
 
@@ -353,7 +353,7 @@ On these 30 posts the fine-tuned model scored higher than the zero-shot baseline
 
 The definitions did not clearly help the baseline. With them it scored 0.367 accuracy and 0.361 macro F1, and with bare label names 0.400 and 0.356, a one-post difference in accuracy. What changed was which label the model favored: with my definitions it called 16 of 30 posts `analysis` and 3 `hot_take`; with bare names it called 22 of 30 `hot_take` and 2 `analysis`. So on this test set my definitions shifted the baseline's errors and did not improve it overall. That is one run on 30 posts and not enough to say how much the definitions are worth.
 
-These comparisons use one seed and one test split. The three-seed runs are still to do, so I am not claiming the gap is stable or that the trained model is reliable. I have not checked whether these numbers would be the same on other hardware.
+These comparisons use the seed-42 run and its test split only. The three seeds in Run Log — Before give similar overall accuracy, but I did not re-score the baseline on the seed 7 and seed 2024 test sets, so I am not claiming the gap is stable or that the trained model is reliable. I have not checked whether these numbers would be the same on other hardware.
 
 
 
@@ -361,8 +361,31 @@ These comparisons use one seed and one test split. The three-seed runs are still
 
 ## Run Log — Before
 
-<!-- Five criteria across three seeds. The notebook's section 6 prints the
-     spread table; the Target and Verdict columns are yours. -->
+**Milestone 2: three seeds, `RUN_LABEL = "before"`.** All three seeds completed: 42, 7 and 2024. The notebook's section 6 was run as one execution, and its results are saved in `results_three_seeds_before.json`. **Device:** CPU (`device: cpu`, torch `2.14.1+cpu`, `max_length` 128, as recorded in the file for each seed). Settings are the notebook's unchanged defaults: `distilbert-base-uncased`, 3 epochs, learning rate 2e-5, batch size 16. Each seed has its own 70/15/15 split of the same 200 posts, with 30 test posts (11 `analysis`, 11 `hot_take`, 8 `reaction`). Total training time for the three seeds was about 4.5 minutes. `results.json`, `test_split.csv` and the baseline files were not changed; I checked their checksums before and after. The seed-42 entry matches the Milestone 5 `results.json` exactly (accuracy, F1, confusion matrix and confidence figures).
+
+*How it was run:* I ran the notebook's own code cells from a script (sections 1 to 3, the function definitions in sections 4 and 5, then sections 6 and 7) and did not save anything into `takemeter.ipynb`. The cells that train and write `results.json` and `test_split.csv` in sections 4 and 5 were cut off before those lines, so Milestone 5's files could not be overwritten. A first attempt failed at start-up, before any training, because my script looked up the notebook's cells wrongly; it produced no results and I fixed the script and re-ran.
+
+| Measure | Seed 42 | Seed 7 | Seed 2024 | Spread |
+|---|---|---|---|---|
+| Overall accuracy | 0.567 | 0.533 | 0.533 | 0.033 |
+| Macro F1 | 0.440 | 0.410 | 0.468 | 0.058 |
+| F1 — `analysis` | 0.750 | 0.692 | 0.720 | 0.058 |
+| F1 — `hot_take` | 0.571 | 0.538 | 0.462 | 0.110 |
+| F1 — `reaction` | 0.000 | 0.000 | 0.222 | 0.222 |
+
+Precision and recall per label, from the same file (each cell is precision / recall):
+
+| Label | Seed 42 | Seed 7 | Seed 2024 |
+|---|---|---|---|
+| `analysis` | 0.692 / 0.818 | 0.600 / 0.818 | 0.643 / 0.818 |
+| `hot_take` | 0.471 / 0.727 | 0.467 / 0.636 | 0.400 / 0.545 |
+| `reaction` | 0.000 / 0.000 | 0.000 / 0.000 | 1.000 / 0.125 |
+
+**Accuracy range:** 0.567 − 0.533 = 0.033, which is under the 0.10 point at which the assignment calls a dataset too small or lopsided for a stable measure, so I am not flagging the overall accuracy as unstable. The per-label scores move much more: `hot_take` F1 by 0.110 and `reaction` F1 by 0.222 (0.000, 0.000 and 0.222). That is what you would expect from test splits where `reaction` has only 8 posts and each post is worth 0.125 of that label's recall. The notebook prints "Stable enough to trust" for the accuracy spread, but I do not read it that way: three runs on a 200-post dataset, scored on 30-post test sets that draw on the same 200 posts, cannot show statistical significance or that the model is reliable. They show that overall accuracy was similar on these three splits, and that `reaction` is barely learned in any of them.
+
+*Limits of this run:* the labels are mostly unchecked (180 of 200); this is CPU only, so I have not checked other hardware; the whitespace problem in the `cold` rows' labels (see Limitations above) affects how the notebook stratifies every seed and makes its section-3 preview table count only 27 of the 30 seed-42 test posts (it prints 10/10/7, because three padded labels are not counted; the real split is 11/11/8); and no diagnosis has been done.
+
+Targets and verdicts for the five criteria are not filled in yet; they belong to the next milestone.
 
 | Criterion | Target | Seed 42 | Seed 7 | Seed 2024 | Verdict |
 |---|---|---|---|---|---|
@@ -374,19 +397,15 @@ These comparisons use one seed and one test split. The three-seed runs are still
 
 ### Confusion matrix
 
-<!-- ⚠️ TYPED AS A MARKDOWN TABLE. The notebook prints one ready to paste.
-     An image of a matrix earns nothing. -->
+Printed by the notebook's section 7. Rows are the true labels and columns are the model's guesses, in the notebook's label order. **This matrix is seed 42 only:** the notebook's section 7 reads the first entry of the three-seed results, which is seed 42. It is the same matrix as in `results.json` from Milestone 5, and I checked that. It is not an average of the seeds.
 
-| true \ predicted |  |  |  |
+| true \ predicted | analysis | hot_take | reaction |
 |---|---|---|---|
-| **** |  |  |  |
-| **** |  |  |  |
-| **** |  |  |  |
+| **analysis** | 9 | 2 | 0 |
+| **hot_take** | 3 | 8 | 0 |
+| **reaction** | 1 | 7 | 0 |
 
-**My biggest off-diagonal number, and what it means:**
-<!-- Not "the model made mistakes" — WHICH boundary it didn't learn, and which
-     direction. "7 real analysis posts were called hot_take and only 3 went the
-     other way" is a direction, not just an error rate. -->
+**My biggest off-diagonal number, and what it means:** 7 real `reaction` posts were called `hot_take`, and no real `hot_take` post was called `reaction`, so the model has not learned the `reaction` / `hot_take` boundary and falls back to `hot_take` for posts I labelled as reactions. The other seeds point the same way: the largest error in each is `reaction` called `hot_take` (6 of 8 in seed 7, 7 of 8 in seed 2024; seed 2024 got 1 `reaction` post right). Adding the three test sets together gives 20 of 24 `reaction` posts called `hot_take`, but those test sets overlap, so I treat that only as a rough pointer. I have not yet diagnosed whether this is a labelling problem, too few `reaction` examples, or a genuinely hard pair. The notebook's remark that such a lopsided direction "usually points at your labelling" is a prompt for that diagnosis, not a finding.
 
 
 
