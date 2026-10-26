@@ -1,0 +1,184 @@
+{
+  "model": "facebook/bart-large-mnli",
+  "n": 30,
+  "seed": 42,
+  "held_out": true,
+  "used_definitions": false,
+  "scores": {
+    "n": 30,
+    "accuracy": 0.4,
+    "f1_macro": 0.35575535575535583,
+    "per_label": {
+      "analysis": {
+        "precision": 0.5,
+        "recall": 0.09090909090909091,
+        "f1": 0.15384615384615385,
+        "support": 11
+      },
+      "hot_take": {
+        "precision": 0.36363636363636365,
+        "recall": 0.7272727272727273,
+        "f1": 0.4848484848484849,
+        "support": 11
+      },
+      "reaction": {
+        "precision": 0.5,
+        "recall": 0.375,
+        "f1": 0.42857142857142855,
+        "support": 8
+      }
+    }
+  },
+  "predictions": [
+    {
+      "text": "is Federer's time span between first being #1 and last being #2 his most underrated/discussed achievement? is Federer's time span between first being #1 and last being #1 his most underrated/discussed achievement? Federer 14 years, 142 days Djokovic 12 years, 341 days Nadal 11 years, 168 days Connors 8 years, 339 days Agassi 8 years, 150 days Sampras 7 years, 221 days Lendl 7 years, 165 days McEnroe 5 years, 189 days Borg 3 years, 344 days Alcaraz 3 years, 212 days",
+      "gold": "analysis",
+      "predicted": "hot_take"
+    },
+    {
+      "text": "Rybakina vs. Sabalenka vs. Swiatek Rybakina vs. Sabalenka vs. Swiatek, which will win the most slams? Not the most slams in tennis history, but between those 3 players. I think Rybakina, followed by Sabalenka, and lastly Swiatek. I was surprised Rybakina didn't beat Sabalenka in Australia, looked like Rybakina's level was slightly higher..... but its good for tennis that Sabalenka won, to help make this an interesting rivalry. Both of them will probably win a lot more slams than the somewhat impotent Swiatek.",
+      "gold": "hot_take",
+      "predicted": "hot_take"
+    },
+    {
+      "text": "Why aren't they showing the BJK Cup??? Can't believe no broadcast of BJK cup just Laver and then Laver rebroadcast here in the states with TC. So what was once one of the premier tour events has become 2nd fiddle to a glorified EXO? I think it is time to put Davis and BJK to rest. Ressurect it in a national men and women's event. So men singles, women's singles, women's dubs, men's dubs and mixed.",
+      "gold": "reaction",
+      "predicted": "reaction"
+    },
+    {
+      "text": "Mind Boggling Stat : From 05 till 14 RG - in BO5 Nadal was 11-3 vs Federer and 10-3 vs Djokovic, a total of 21-6 in H2H vs them... 05-2014 French Open in best of 5 set matches Beat Federer - 11-3 Beat Djokovic - 10-3 Total of 21-6 (almost 78% win record in bo5) Absolute destruction.. Even if we see outside clay that is still 7-6 vs them, on clay it is a massacre, they were beaten back to back in some tournaments as if they were lower ranked journeymen...",
+      "gold": "analysis",
+      "predicted": "hot_take"
+    },
+    {
+      "text": "Should we consider the Six Kings Slam an exhibition event, or an alternative pro circuit event? What the title says. Personally, considering the HUGE money incentive to win it, I think it should be seen as a professional invitational event, in the vein of the pre-Open Era Pro Tour of the Gonzales/Rosewall/Laver era. Also, there's an actual betting market for it, which generally isn't the case for \"true\" exhibition events. What I believe is happening, is that the tournament organization are trying to play it down as \"technically\" an exho, so that the ATP doesn't slam the door on them by changing the rules to prevent top players from taking part in what really is a budding alternative circuit in all but name. Opinions?",
+      "gold": "analysis",
+      "predicted": "hot_take"
+    },
+    {
+      "text": "Does this graph prove Djokovic has the highest peak? This graph by my friend @TMF shows peak age is 24-25. Three of the Big4 were 24-25 in 2011-12. The best player of 2011-12 was Djokovic by far: Slams: Djokovic 4, Nadal 2, Federer 1, Murray 1 Big titles: Djokovic 13, Federer 6, Nadal 5, Murray 4, Ferrer 1. YE #1: Djokovic 2, others 0. Does this prove 2011-12 Djokovic has the highest peak ever?",
+      "gold": "analysis",
+      "predicted": "hot_take"
+    },
+    {
+      "text": "CYGS = instant GOAT? Would you say winning the CYGS instantly gives that player the GOAT title? In my opinion, it would certainly make them a very strong contender. If Alcaraz won the CYGS next year then never wins even a 250 the rest of his career I would say he is the GOAT. If a mug (Ruud, de minaur, etc) won the CYGS and nothing else I would say it at least puts them in the discussion.",
+      "gold": "hot_take",
+      "predicted": "hot_take"
+    },
+    {
+      "text": "Djokovic is more charismatic than Nadal and Fed, why can't people see this? He actually smiles on court and has a sense of humour unlike Nadal and Fed. He seems more human than Nadal and Fed, and therefore it is easy to relate to him. I don't think Nadal has a sense of humour at all. I have never seen him smile on court once. I'm not saying Fed and Nadal lack charisma. Ofcourse they both have charisma, but Djokovic has much more.",
+      "gold": "hot_take",
+      "predicted": "hot_take"
+    },
+    {
+      "text": "What players other than Federer achieved these results past their peak? According to many Federer's peak ended in 2007. But after 2007 Federer achieved: - the majority of his Slam finals (17 out of 31) - the majority of his Slam semifinals (30 out of 46) - the majority of his big tournaments finals (52 out of 92) - the majority of his big tournament semifinals (84 out of 130) What other players have reached the majority of Slam F/SFs and Big Tournament F/SFs after their peak ended?",
+      "gold": "analysis",
+      "predicted": "hot_take"
+    },
+    {
+      "text": "Jodar will become the 3rd best player in the world by the end of 2027 I've been thinking about this for a while and had some time to sit on it so here it is : Rafael Jodar will become the 3rd best player in the word in a matter of 18-20 months. His raise has been astronomic and thinking about the weaknesses in his game I think he's the most likely talent to climb up there and challenge Carlos/Sinner in the near future. rough mock of my 2027 year end prediction : 1. Alcaraz 2. Sinner 3. Jodar 4. Zverev 5. Fils 6. Shelton 7. Mensik 8. Fonseca 9. Djokovic 10. Cobolli I wanted to include musetti but he's often injured but yeah I'm pretty sure Jodar will be up there by the end of next year.",
+      "gold": "hot_take",
+      "predicted": "hot_take"
+    },
+    {
+      "text": "iMG proposes JV teams IMG wants to stay in business. So they are proposing D1 universities add more teams. Problem is they charge 100k per year and cant deliver. Nobody is going there to play d3. So they want D1 schools to have JV teams. Personally I hope the whole industry implodes as they are selling false promises , especially when it comes to tennis. Not just IMG, just about every junior academy. Thoughts? Leaders At IMG Academy Propose New Collegiate Athletics Model In the post House Settlement era, leaders within IMG Academy are proposing a model that expands collegiate sport offerings, not eliminates them. www.forbes.com",
+      "gold": "hot_take",
+      "predicted": "reaction"
+    },
+    {
+      "text": "Everyone talks about potential in terms of being a tennis player but what about potential in terms of being a celebrity? I'm not sure who I'd pick for my question so I'll have to think about it and maybe add that in this OP later as an edit. Some part of me wants to say Safin because I felt he had all the right ingredients for it (including the potential to be a dominant player) but he did achieve stardom for a short while. Edit: However he didn't achieve the level of stardom he could've despite the fame (or infamy) he gained",
+      "gold": "hot_take",
+      "predicted": "hot_take"
+    },
+    {
+      "text": "Got a college coaching position! Been on the site for years and fluctuate on activity, but wanted to share on here I GOT MY FIRST FULL TIME COACHING POSITION!! super excited. Would love to post about the journey and matches as I move forward. Its a D2 university with men's and women's tennis!",
+      "gold": "reaction",
+      "predicted": "hot_take"
+    },
+    {
+      "text": "Novak confirms he's playing until LA 2028 Olympics Good news for everyone on TTW, Big 3 GOAT threads can stay on GPPD for two more years. LOL",
+      "gold": "reaction",
+      "predicted": "hot_take"
+    },
+    {
+      "text": "......And The NEW!!!!!! Reigning!!! Defending!!! Undisputed!!! Heavyweight ATP Mens number one player of the world!!!!! Alexander Zverev!!! https://www.atptour.com/en/news/alexander-zverev-clinches-year-end-no-1-2026",
+      "gold": "reaction",
+      "predicted": "hot_take"
+    },
+    {
+      "text": "Djokovic 100 titles vs Federer 103 titles, Djokovic is actually better than Federer by adding the ATP points of each titles together Djokovic's title breakdown 100 titles (72 big titles): 24 GS 40 M1000 7 ATP finals 1 Olympics 15 M500 13 M250 Federer only has 59 big titles, the other 54 titles are smaller ones. Even if Djokovic could not pass 103, he is still the best as we should convert the titles into points instead of counting titles only.",
+      "gold": "analysis",
+      "predicted": "hot_take"
+    },
+    {
+      "text": "Who would have won more majors if they maxmized their talent: Becker or Agassi? Agassi won 8 majors and Becker 6. Given how young Becker was when he won his first, he probably could have hit double digits if he was focused. Agassi had a great late career but had a period between 96-98 when he underachieved. He also skilled the AO until 95. Not saying he would have won every year from 89-94, but maybe he could have picked up one or 2. Who do you think could have won more majors if they maxmized their talent?",
+      "gold": "hot_take",
+      "predicted": "hot_take"
+    },
+    {
+      "text": "How Many More Majors Do You Think LLeyton Hewitt Would Have Won If It Wasn't For All His Injuries? I feel like he could have won at least 5 or 6 Majors if it wasn't fun all his injuries. The fact that Roger Federer was around dominating everyone certainly didn't help his cause either. He should have won a lot more tournaments. He was such a great player and definitely woul have won a lot more if wasn't for Roger Federer and all his injuries. The fact that he only has two Masters Series Titles is mind boggling to me. What do you think of Lleyton Hewitt as a Tennis Player? Why do you think that he didn't win a lot more tournaments or at least make a lot more Quarterfinals, Semi Finals, or Finals? He was the number 1 player in the world and it's a shame that he couldn't contain it. I would love to hear everyone's honest opinions about Lleyton Hewitt as a Tennis Player.",
+      "gold": "hot_take",
+      "predicted": "hot_take"
+    },
+    {
+      "text": "Who wins at the AO, 2026 Carlos Alcaraz with Isner's serve vs 2002 Thomas Johansson? Obviously, under normal circumstances, 2002 Thomas Johansson easily beats any version of Alcaraz at the AO and it wouldn't even be close. Johansson was SO underrated on hard courts back in the day, it's borderline unfair. Hence, to make the match-up at least fairer, I decided to give 2026 Alcaraz (arguably his peak AO form, especially in the finals) the serve of John Isner, while preserving everything else in his game. In that case, could Carlitos make the match-up at least close? Heck, could he even win?",
+      "gold": "hot_take",
+      "predicted": "hot_take"
+    },
+    {
+      "text": "No male tennis players get a D1 \u201cfull ride\u201d. I am surprised to come here and see people that are in the tennis world , and still inquire about \u201cfull rides\u201d, There are usually 10 or more players on a D1 tennis team. They offer 4.5 scholarships. (I guess might offer. Is not mandatory) (Rules are changing, and it seems some might offer 10, but there is no rule that they must so nobody knows) we just know women\u2019s sports must offer more to make up for football scholarships going to boys due to title IX. So let\u2019s say a tennis team has on average 2-3 openings a year. And let\u2019s say you are a 12.5 utr. One of the top 10, 20, or 50 players in all Of the USA. If that school gives you a \u201cfull ride\u201d that leaves 3.5 for the rest of the team. You are just an incoming freshman. Even if you are top of your high school class, it does not mean you are top of the university. You most likely will be near the bottom of the line up. Even if you are top of the line up, not many coaches want to leverage it like that. Many of the other players would not return if their partial was given to an incoming freshman. Now if someone can help me here\u2026. Even if your top player gets a partial scholarship, if they are going out of state , aren\u2019t they paying increased tuition? Example. UGA cost in state. $29,000 UGA cost out of state $52,000 So if an out of state player gets a partial scholarship, aren\u2019t they paying based on the $52,000?",
+      "gold": "analysis",
+      "predicted": "reaction"
+    },
+    {
+      "text": "The players who are born in the 1990s won 2 slams until now. In 2020 Thiem won the US Open (a tournament he possibly only won because Djokovic was disqualified for hitting a line judge) and in 2021 Medvedev won US Open. The best players of the 90s generation who might have the best chances to still win a slam are Zverev Medvedev Fritz Ruud Rublev. The players born in the 1990s might end up winning no AO no FO and no Wimbledon. The players born in the 1990s might end up with less slams than Stan Wawrinka",
+      "gold": "analysis",
+      "predicted": "hot_take"
+    },
+    {
+      "text": "Victim of the Junkballer/Pusher So, I just played a pusher for 3 hours in a local league singles match. I know they are entitled to play how they want. But why would anyone want to play like that? Its cowardly, pathetic, boring. I literally gave up because I couldn't be bothered to run around after his bunty strokes anymore. Im disgusted with myself for not having walked off the court sooner.",
+      "gold": "hot_take",
+      "predicted": "reaction"
+    },
+    {
+      "text": "Congratulations to Rybakina on her second major! After all her past challenges, it was exciting to see Elena Rybakina rise to the occasion and take out both the world number 1 and the world number 2. It's truly great to see some depth on Tour these days, and that final was amazing since the outcome wasn't decided until the final moments. This is what tennis is about. Anyone else excited to see Rybakina holding the trophy at the end, especially after her stunning triumph at the WTA Finals?",
+      "gold": "reaction",
+      "predicted": "reaction"
+    },
+    {
+      "text": "Congratulations US Tennis Currently there are 12 US players in the ATP Top 100 - a real testament and credit to the strength in depth in US tennis at the moment. 6 players in the top 20 alone which is remarkable. RankNamePoints4B Shelton46808F Tiafoe338012T Fritz288016L Tien239517T Paul237518B Nakashima233535A Michelsen146066E Quinn87474S Korda79081A Kovacevic73082Z Svajda72988M Giron688 You guys are doing something right so congratulations. Is this USTA driven, the college system, funding, elite coaching or any there other reasons for this success? Please share to a poor relative across the pond.",
+      "gold": "analysis",
+      "predicted": "hot_take"
+    },
+    {
+      "text": "Comparison between over35yo Djokovic vs Sincaraz and over31yo Federer vs Djokodal Djokovic's h2h in Slam F/SF/QFs, YEC F/SFs and Masters/Olympics Fs after turning 35 years old (and 40 days): vs Alcaraz 5-4 vs Sinner 4-5 Total = 9-9 Federer's h2hs in Slam F/SF/QFs, YEC F/SFs and Masters/Olympics Fs after turning 31 years old (and 10 days): vs Djokovic 1-12 vs Nadal 4-4 Total = 5-16 A much older Djokovic dealt with younger ATGs much better than Federer did. Federer actually dealt well with Nadal, his problem was, again, Djokovic. What emerges from this is that Nole is a level above all these other players. He dominated old Federer but did not allow younger ATGs to dominate himself",
+      "gold": "analysis",
+      "predicted": "analysis"
+    },
+    {
+      "text": "After this USO, it needs to be said Federer's run from the first round of 2004 to the final of 2009 looks more and more impressive the more time passes on. Since his remarkable run, we know of at least four ATG players that have won the USO, Nadal, Djokovic, Sinner and Alcaraz, plus several players who had the potential to play like an ATG player = Murray, Wawrinka, Del Potro, Cilic, Medvedev, Thiem, and now Zverev. That is a list of a who's who of the top tier talent from the several generations that followed Federer's....and yet none of them could go back to back Federer went back to back four times, and all four of them were in succession. I don't care about what people think the competition was, to do what he did does indeed deserve praise because even defending the title once has been impossible for a true hall of fame list of HC talents, and this guy ruled NYC with an iron fist. Say what you want about him. Think what you want about him. But you cannot deny his greatness.",
+      "gold": "analysis",
+      "predicted": "hot_take"
+    },
+    {
+      "text": "ENOUGH with the Towels already Rafa!! It's beyond annoying especially it takes up like 1/8th the entire match waiting on him to towel off.. STAAAAAAAAP IT ALREADY.",
+      "gold": "reaction",
+      "predicted": "reaction"
+    },
+    {
+      "text": "Bartunkova uses ATP form I noticed during the Svitolina/Bartunkova match that Bartunkova implements ATP form on FH AND BH. She even levied a fair amount of net play on Svito. I enjoyed watching and studying the subtleties of her technique! Please go watch or let me know if you saw the same!",
+      "gold": "reaction",
+      "predicted": "hot_take"
+    },
+    {
+      "text": "Why is Sinner less hated than Zverev? Zverev gets a lot of hate because people say \u201ehe is a womens beater\u201c, which are unproven claims anyways. He wasnt ever found guilty. At the same time, Jannik Sinner literally is a proven doper. He was tested positive for doping. And being a doper is much more relevant for the sports anyways than any off court accusations. So why does Jannik Sinner get a pass for having tested positive for doping while people are desperate to hate Zverev, who never was proven to have broken any law?",
+      "gold": "hot_take",
+      "predicted": "analysis"
+    },
+    {
+      "text": "If the current administration is able to actually ban foreign students I can\u2019t imagine what it\u2019ll do to D1 college tennis and D2 to a certain extent. Even many mid- tier programs are well over 3/4 internationals.Programs are already getting cut all over the place and i certainly don\u2019t see this helping college tennis stay relevant",
+      "gold": "reaction",
+      "predicted": "hot_take"
+    }
+  ]
+}

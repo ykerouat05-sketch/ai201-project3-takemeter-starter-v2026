@@ -39,7 +39,7 @@
 
 ## What This Does
 
-TakeMeter is a classifier for public tennis-discussion posts. It sorts each post into one of three labels: `analysis` (a claim backed by specific, checkable evidence), `hot_take` (a confident judgment or prediction without meaningful support) or `reaction` (an emotional or humorous response). The community is the Tennis Warehouse (Talk Tennis) message board; the 200 posts in `labels.csv` all come from it. The model is `distilbert-base-uncased` fine-tuned on those posts. Only one training run (seed 42, on CPU) has been done so far; the three-seed experiments, the baseline comparison and the diagnosis belong to the next unit.
+TakeMeter is a classifier for public tennis-discussion posts. It sorts each post into one of three labels: `analysis` (a claim backed by specific, checkable evidence), `hot_take` (a confident judgment or prediction without meaningful support) or `reaction` (an emotional or humorous response). The community is the Tennis Warehouse (Talk Tennis) message board; the 200 posts in `labels.csv` all come from it. The model is `distilbert-base-uncased` fine-tuned on those posts. Only one training run (seed 42, on CPU) has been done so far; the baseline comparison is done, and the three-seed experiments and the diagnosis are still pending.
 
 
 ---
@@ -260,7 +260,7 @@ No label is above 70% (the assignment limit) or above 50% (my criterion 3), so t
 - **Evidence-backed posts are a big class.** Many `analysis` posts are lists of statistics. A model may learn "has numbers means analysis", which is only partly what the definition means.
 - **Labelling the posts partly from the title.** Each text starts with the thread title. Some titles are questions, which are not judgments by themselves.
 - **Whitespace in the `cold` rows' labels (unresolved).** The 20 `cold` rows were entered with a space after each comma, so their labels are stored as, for example, ` hot_take`, and their notes as ` cold`. I left `labels.csv` as it is because those rows must stay unchanged. Training and `baseline.py` strip labels before using them, so the training run and its metrics are not affected. But the notebook's `split_dataset` stratifies on the raw value, so it uses six label groups instead of three: the 20 `cold` rows are always split 14 train, 3 validation and 3 test, and the seed-42 test split is 11/11/8 where a normalized split would give 10/12/8. The notebook's dataset check also prints six label rows and warns "Only 4 examples of ' analysis'". Three rows of `test_split.csv` carry the leading space. The saved seed-42 split and `results.json` are kept as they are, and I have not decided whether to normalize in the notebook before the three-seed run. Doing so would change every split and require retraining.
-- **One training run so far.** I trained once, with seed 42 on CPU, in Milestone 5. The three-seed run, the baseline and any diagnosis or improvement belong to the next unit and have not been done.
+- **One training run so far.** I trained once, with seed 42 on CPU, in Milestone 5. The baseline comparison (Milestone 1) has since been run, and is below. The three-seed run, the diagnosis and any improvement are still pending.
 
 ---
 
@@ -276,7 +276,7 @@ No label is above 70% (the assignment limit) or above 50% (my criterion 3), so t
 
 **Split sizes:** 139 train, 31 validation, 30 test (70/15/15, stratified, seed 42). Test split by label: 11 `analysis`, 11 `hot_take`, 8 `reaction`. `reaction` has the fewest examples in test, so its scores will vary a lot between seeds. (The stratification caveat for the `cold` rows is listed under Limitations above.)
 
-**Results (one run: seed 42, 30 test posts):** accuracy 0.567 (17 of 30) and macro F1 0.440. Per-class F1: `analysis` 0.750 (n=11), `hot_take` 0.571 (n=11), `reaction` 0.000 (n=8). `results.json` also records precision, recall, a confusion matrix and confidence figures. These come from one seed and a 30-post test set, so they show what this run scored and are not evidence that the model is reliable. I have not yet run the other two seeds, compared against the baseline, built or read the confusion matrix, or diagnosed these numbers. That is the next unit's work.
+**Results (one run: seed 42, 30 test posts):** accuracy 0.567 (17 of 30) and macro F1 0.440. Per-class F1: `analysis` 0.750 (n=11), `hot_take` 0.571 (n=11), `reaction` 0.000 (n=8). `results.json` also records precision, recall, a confusion matrix and confidence figures. These come from one seed and a 30-post test set, so they show what this run scored and are not evidence that the model is reliable. I have not yet run the other two seeds, built or read the confusion matrix, or diagnosed these numbers. The baseline comparison is in the next section.
 
 **Saved artifacts:** `results.json` (valid JSON, metrics consistent with its confusion matrix) and `test_split.csv` (the 30 held-out posts; it matches the notebook's own seed-42 split of `labels.csv`) were written by the notebook and committed in `2cc7427`, "Save Takemeter training results". `labels.csv` was committed earlier in `9db4e45`.
 
@@ -313,27 +313,47 @@ No label is above 70% (the assignment limit) or above 50% (my criterion 3), so t
 
 ---
 
-> **Status: pending (unit 6).** Nothing below has been done. Only the single seed-42 run described in The Training Run exists. The baseline comparison, the three-seed runs, the confusion matrix, the verdicts and diagnoses, the agreement report and the improvement are all still to do.
+> **Status (unit 6).** Only Milestone 1 (the baseline) has been done: see Baseline vs. Trained below. The three-seed runs, the confusion matrix, the verdicts and diagnoses, the agreement report and the improvement are still pending. All trained numbers here come from the single seed-42 run.
 
 ## Baseline vs. Trained
 
-<!-- Both models on the same posts. `python baseline.py --trained results.json`
-     prints this table for you. -->
+**The baseline.** `baseline.py` runs `facebook/bart-large-mnli`, a general zero-shot model, with no training. For each post it scores each label's text in the hypothesis "This post is {}." and picks the highest. It runs locally on CPU and needs no API key. It scored the same 30 held-out posts as the trained model: it read them from `test_split.csv` (no fallback to a random sample), and I checked that its 30 posts and gold labels match that file in the same order. The label texts it used are my definitions from this README, copied word for word into `label_definitions.txt`. Results are in `baseline_results.json`.
 
-| Measure | Baseline | Trained | Difference |
+| Measure | Baseline (my definitions) | Trained (seed 42) | Difference |
 |---|---|---|---|
-| Overall accuracy |  |  |  |
-| Macro F1 |  |  |  |
-| F1 — `label_one` |  |  |  |
-| F1 — `label_two` |  |  |  |
+| Overall accuracy | 0.367 | 0.567 | +0.200 |
+| Macro F1 | 0.361 | 0.440 | +0.079 |
+| F1 — `analysis` | 0.444 | 0.750 | +0.306 |
+| F1 — `hot_take` | 0.429 | 0.571 | +0.143 |
+| F1 — `reaction` | 0.211 | 0.000 | -0.211 |
+
+These are the actual outputs of `python baseline.py --trained results.json`. I recomputed accuracy and every per-label F1 from the saved predictions and they match. The test set is 30 posts (11 `analysis`, 11 `hot_take`, 8 `reaction`) and all labels are scored against the dataset labels as they stand, 180 of which are not yet checked by me. A difference of one post is 0.033 in accuracy.
+
+**Bare label names, kept separate.** I also ran the baseline without my definitions (`python baseline.py --definitions does_not_exist.txt --out baseline_results_bare_labels.json`), so the model sees only the words `analysis`, `hot_take` and `reaction`. Results are in `baseline_results_bare_labels.json`, and they are not mixed with the table above.
+
+| Measure | Baseline (bare names) | Baseline (my definitions) | Trained (seed 42) |
+|---|---|---|---|
+| Overall accuracy | 0.400 | 0.367 | 0.567 |
+| Macro F1 | 0.356 | 0.361 | 0.440 |
+| F1 — `analysis` | 0.154 | 0.444 | 0.750 |
+| F1 — `hot_take` | 0.485 | 0.429 | 0.571 |
+| F1 — `reaction` | 0.429 | 0.211 | 0.000 |
+
+**What was run:** `python baseline.py`, `python baseline.py --trained results.json`, and the bare-names command above, all on CPU with the committed `test_split.csv`. An earlier `baseline_results.json` was already in the folder when I started this step. Re-running `python baseline.py` produced a byte-identical file, so that earlier run reproduced exactly on this machine.
 
 **What I predicted before I looked:**
-<!-- Milestone 1 asks you to write this BEFORE seeing the trained numbers. A
-     prediction made afterwards isn't one. -->
+
+> I predict that the fine-tuned model will outperform the general-model baseline on analysis posts because training should help it recognize evidence-based claims, although it may still struggle to distinguish hot takes from reactions.
+
+*Timing, stated plainly:* this prediction was written into the README on 26 October 2026, immediately before I re-ran the baseline commands in this step. It is not a strict pre-registration. The trained model's results (`results.json`, committed in `2cc7427`) already existed when I wrote it, and a `baseline_results.json` from an earlier run was already in the working folder when this step began (see "Results" below).
 
 **What the gap actually means:**
-<!-- If the baseline matched your trained model, your fine-tuning added
-     nothing — and that is a real finding, not a failure. Say it plainly. -->
+
+On these 30 posts the fine-tuned model scored higher than the zero-shot baseline overall (accuracy 0.567 against 0.367, macro F1 0.440 against 0.361), so the training added something here. The gain is concentrated in `analysis` (F1 0.750 against 0.444), as I predicted, and `hot_take` improved too. It is not better on every label: the trained model's `reaction` F1 is 0.000 against the baseline's 0.211. Its confusion matrix in `results.json` shows why: 7 of the 8 `reaction` posts were called `hot_take` and none was called `reaction`. That fits the second half of my prediction, that hot takes and reactions would be hard to tell apart, though this is one seed and 8 reaction posts, so I am not drawing a firm conclusion. I have not yet diagnosed the cause.
+
+The definitions did not clearly help the baseline. With them it scored 0.367 accuracy and 0.361 macro F1, and with bare label names 0.400 and 0.356, a one-post difference in accuracy. What changed was which label the model favored: with my definitions it called 16 of 30 posts `analysis` and 3 `hot_take`; with bare names it called 22 of 30 `hot_take` and 2 `analysis`. So on this test set my definitions shifted the baseline's errors and did not improve it overall. That is one run on 30 posts and not enough to say how much the definitions are worth.
+
+These comparisons use one seed and one test split. The three-seed runs are still to do, so I am not claiming the gap is stable or that the trained model is reliable. I have not checked whether these numbers would be the same on other hardware.
 
 
 
