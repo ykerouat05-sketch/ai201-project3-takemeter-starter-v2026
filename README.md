@@ -313,7 +313,7 @@ No label is above 70% (the assignment limit) or above 50% (my criterion 3), so t
 
 ---
 
-> **Status (unit 6).** Milestone 1 (the baseline) and Milestone 2 (three seeds and the confusion matrix) have been run: see Baseline vs. Trained and Run Log — Before below. The verdicts and diagnoses, the agreement report and the improvement are still pending. The Baseline vs. Trained comparison uses the seed-42 run only.
+> **Status (unit 6).** Milestones 1 to 4 are done: the baseline (Baseline vs. Trained), the three seeds and confusion matrix (Run Log — Before), the agreement report, and the criterion verdicts and diagnoses (Verdicts and Diagnoses). The improvement and its Run Log — After are still pending. The Baseline vs. Trained comparison uses the seed-42 run only.
 
 ## Baseline vs. Trained
 
@@ -385,15 +385,15 @@ Precision and recall per label, from the same file (each cell is precision / rec
 
 *Limits of this run:* the labels are mostly unchecked (180 of 200); this is CPU only, so I have not checked other hardware; the whitespace problem in the `cold` rows' labels (see Limitations above) affects how the notebook stratifies every seed and makes its section-3 preview table count only 27 of the 30 seed-42 test posts (it prints 10/10/7, because three padded labels are not counted; the real split is 11/11/8); and no diagnosis has been done.
 
-Targets and verdicts for the five criteria are not filled in yet; they belong to the next milestone.
+The five criteria are the ones filed in `criteria.md`. The values are from `results_three_seeds_before.json`, except criteria 3 and 4, which are measured once and not per seed. The verdicts are explained under Verdicts and Diagnoses.
 
 | Criterion | Target | Seed 42 | Seed 7 | Seed 2024 | Verdict |
 |---|---|---|---|---|---|
-| 1.  |  |  |  |  |  |
-| 2.  |  |  |  |  |  |
-| 3.  |  |  |  |  |  |
-| 4.  |  |  |  |  |  |
-| 5.  |  |  |  |  |  |
+| 1. Overall accuracy | at least 0.60 on every seed | 0.567 | 0.533 | 0.533 | MISSED |
+| 2. Per-label F1 | at least 0.50 for every label on every seed | analysis 0.750, hot_take 0.571, reaction 0.000 | analysis 0.692, hot_take 0.538, reaction 0.000 | analysis 0.720, hot_take 0.462, reaction 0.222 | MISSED |
+| 3. Label balance | no label above 50% of the dataset | n/a (whole file): largest is `hot_take`, 78 of 200 = 39.0% | n/a | n/a | MET |
+| 4. Agreement with staff | at least 70% (21 of 30) | n/a (measured once): 30 of 30 = 100% | n/a | n/a | MET, with a caveat |
+| 5. Confidence separation | most-confident third at least 0.10 more accurate than least-confident third | 0.70 − 0.40 = 0.30 | 0.60 − 0.40 = 0.20 | 0.80 − 0.40 = 0.40 | MET |
 
 ### Confusion matrix
 
@@ -413,29 +413,33 @@ Printed by the notebook's section 7. Rows are the true labels and columns are th
 
 ## Verdicts and Diagnoses
 
-<!-- MET or MISSED against LAST UNIT's target. The target has to hold across
-     all three seeds, not turn up sometimes. -->
+### Milestone 4: Criterion verdicts and diagnoses
+
+The targets are the ones in `criteria.md`, and each has to hold on all three seeds where it is a per-seed criterion. Two criteria are missed and three are met. Every diagnosis below is a hypothesis from three runs on 30-post test sets, not a proof, and I am not claiming statistical significance.
 
 | # | Criterion | Target | Verdict | How I decided |
 |---|---|---|---|---|
-| 1 |  |  |  |  |
-| 2 |  |  |  |  |
-| 3 |  |  |  |  |
-| 4 |  |  |  |  |
-| 5 |  |  |  |  |
+| 1 | Overall accuracy | at least 0.60 on every seed | MISSED | 0.567, 0.533 and 0.533: all three below 0.60 |
+| 2 | Per-label F1 | at least 0.50 for every label on every seed | MISSED | 5 of 9 scores reached 0.50: `analysis` in all three seeds, `hot_take` in two (0.462 in seed 2024), `reaction` in none (0.000, 0.000, 0.222) |
+| 3 | Label balance | no label above 50% of the dataset | MET | Largest label is `hot_take`, 78 of 200 = 39.0% (checked once on `labels.csv`) |
+| 4 | Agreement with staff | at least 70% (21 of 30) | MET, with a caveat | 30 of 30 = 100%, but see the caveat below |
+| 5 | Confidence separation | gap of at least 0.10 on every seed | MET | Gaps of 0.30, 0.20 and 0.40 |
 
 **Diagnoses**
 
-<!-- For each miss: the cause, and how you know. The four common causes are:
-     too few examples for a label, a boundary you applied inconsistently, a
-     genuinely hard label pair, and a task the model can't reach from this
-     much data.
+**Criterion 1 — Overall accuracy: MISSED.** The target was an accuracy of at least 0.60 in every seed. Accuracy was 0.567 for seed 42, 0.533 for seed 7 and 0.533 for seed 2024, so all three runs missed it. The confusion matrices show that errors between `reaction` and `hot_take` are a major contributor. The model predicted `hot_take` for 7 of 8 true `reaction` posts in seed 42, 6 of 8 in seed 7 and 7 of 8 in seed 2024. This suggests that the model has not learned a reliable boundary between these two labels. The small dataset and test sets of only 30 posts also limit how much the model can learn and make the scores sensitive to individual examples.
 
-     ⚠️ Use your agreement report as evidence. It is the only instrument you
-     have that can tell a LABELLING problem from a MODEL problem, and this
-     section is graded on whether you used it that way. -->
+**Criterion 2 — F1 for every label: MISSED.** The target required every label to have an F1 of at least 0.50 in every seed. `analysis` met the target in all three seeds, with F1 scores of 0.750, 0.692 and 0.720. `hot_take` met it for seeds 42 and 7 (0.571 and 0.538) but missed for seed 2024 (0.462). `reaction` missed in all three seeds (0.000, 0.000 and 0.222). The confusion matrices show that the model repeatedly predicts `hot_take` for true `reaction` posts. There were only eight true `reaction` posts in each test set, so each error has a large effect on its score. This is evidence of a difficult label boundary and limited data, but the current evidence does not prove which is the main cause.
 
+**Criterion 3 — Label balance: MET.** The target in `criteria.md` is that no single label makes up more than 50% of the completed dataset. The largest is `hot_take` at 78 of 200 (39.0%), then `analysis` at 69 (34.5%) and `reaction` at 53 (26.5%). This is checked once on the whole file, not per seed.
 
+*A separate observation, not the criterion:* the model's own predictions were more lopsided than the data. In seed 42 it predicted `hot_take` 17 times out of 30 (56.7%). In seed 7 `hot_take` and `analysis` were each predicted 15 times (50.0%), and in seed 2024 `hot_take` was predicted 15 times (50.0%). It predicted `reaction` 0 times in seeds 42 and 7 and once in seed 2024, although `reaction` is 26.5% of the dataset and 8 of every 30 test posts. In seed 42 it called seven true `reaction` posts `hot_take`. That supports the view that the model over-relies on `hot_take` instead of learning to identify `reaction`. I report it separately because the filed criterion 3 is about the dataset. Changing a criterion after seeing results would need a dated revision added under the original in `criteria.md`, and I have not made one.
+
+**Criterion 4 — Agreement with staff labels: MET, with an important caveat.** The agreement report found 30 agreements out of 30 posts, an observed agreement rate of 100%, above the 70% target. However, Claude Code had suggested classifications before I completed my own labels, and those suggestions may have influenced my decisions. Therefore, this result cannot be treated as independent evidence that my labeling is consistent. The report had no disagreements to adjudicate, so it cannot establish whether the `reaction`/`hot_take` boundary was applied consistently in the training dataset.
+
+**Criterion 5 — Confidence separation: MET.** The target was a difference of at least 0.10 between the accuracy of the most-confident third and the least-confident third of predictions. The differences were 0.70 − 0.40 = 0.30 for seed 42, 0.60 − 0.40 = 0.20 for seed 7 and 0.80 − 0.40 = 0.40 for seed 2024. All three met the target. This only shows that the model performed better on its most-confident predictions than on its least-confident predictions under this measure; it does not mean the model is reliable overall.
+
+**Overall diagnosis.** The strongest recurring issue is the `reaction`/`hot_take` confusion. The agreement report does not demonstrate an independent labeling problem, because the labeling process may have been influenced by AI suggestions and there were no disagreements. The evidence supports investigating the label boundary and adding or reviewing examples, especially `reaction` examples. The small dataset and small test sets also make the per-label scores unstable. These are plausible contributing causes, not proof that any one cause explains every error.
 
 ---
 
