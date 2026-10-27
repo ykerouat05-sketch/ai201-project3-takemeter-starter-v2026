@@ -206,7 +206,7 @@ The notebook's dataset check stops training if any single label is more than 70%
 
 **How the split works:** I do not split the data. `labels.csv` stays as one file, and the notebook's `split_dataset` makes the stratified 70/15/15 split, redrawn for each seed (42, 7, 2024). The seed-42 split that the notebook wrote to `test_split.csv` has 139 train, 31 validation and 30 test rows, with no text shared between splits; the test split has 11 `analysis`, 11 `hot_take` and 8 `reaction` rows. (An earlier version of this paragraph said 10, 12 and 8. That came from a check of mine that stripped the stray leading spaces from the labels of the 20 `cold` rows before splitting. The notebook does not strip them before splitting, so its split differs. The numbers here are from the notebook's own `test_split.csv`.)
 
-**Counts per label (200 posts):**
+**Counts per label (the original 200 posts; Milestone 5 later added 30 `reaction` rows, see The Improvement):**
 
 | Label | Count | Share |
 |---|---|---|
@@ -304,7 +304,7 @@ No label is above 70% (the assignment limit) or above 50% (my criterion 3), so t
 - *What came back:* An explanation of the implications of a fourth label for the definitions, the label list and the balance checks.
 - *What I changed:* I decided against a catch-all. I kept exactly three labels, wrote an exclusion rule so a post that fits none is left out and not forced into a label, and updated the README and `label_definitions.txt` to match.
 
-**Pre-labelling disclosure:** The first 20 labels in `labels.csv` (note `cold`) are mine and were made without AI suggestions. The other 180 posts were collected and pre-labelled by Claude Code. I have **not** reviewed those 180 labels one by one, so each carries the note `pre-labelled, unchecked`, and I will change a note to `pre-labelled, checked` only for rows I have reviewed myself. The audit above is Claude Code's second pass over its own labels, plus my decisions on its recommendations. It is not an independent human check of every row. Two earlier suggestions (Race to Turin 2026, and Alcaraz/Sinner vs. Federer) were never added to `labels.csv`.
+**Pre-labelling disclosure:** The first 20 labels in `labels.csv` (note `cold`) are mine and were made without AI suggestions. The other 180 posts were collected and pre-labelled by Claude Code. I have **not** reviewed those 180 labels one by one, so each carries the note `pre-labelled, unchecked`, and I will change a note to `pre-labelled, checked` only for rows I have reviewed myself. The audit above is Claude Code's second pass over its own labels, plus my decisions on its recommendations. It is not an independent human check of every row. Two earlier suggestions (Race to Turin 2026, and Alcaraz/Sinner vs. Federer) were never added to `labels.csv`. The 30 `reaction` rows added in Milestone 5 were also selected and labelled by Claude Code and are not checked by me either. I reviewed the proposed list and had 10 of the first 30 replaced, but I did not independently re-read every added thread. Their note is `added-milestone5; pre-labelled, unchecked`.
 
 <!-- ═══════════════════════ UNIT 6 — THE TEST ═══════════════════════
 
@@ -313,7 +313,7 @@ No label is above 70% (the assignment limit) or above 50% (my criterion 3), so t
 
 ---
 
-> **Status (unit 6).** Milestones 1 to 4 are done: the baseline (Baseline vs. Trained), the three seeds and confusion matrix (Run Log — Before), the agreement report, and the criterion verdicts and diagnoses (Verdicts and Diagnoses). The improvement and its Run Log — After are still pending. The Baseline vs. Trained comparison uses the seed-42 run only.
+> **Status (unit 6).** Milestones 1 to 5 have been run: the baseline (Baseline vs. Trained), the three seeds and confusion matrix (Run Log — Before), the agreement report, the criterion verdicts and diagnoses (Verdicts and Diagnoses), and the improvement with its Run Log — After (The Improvement). What's Still Broken is not written yet. The Baseline vs. Trained comparison uses the seed-42 run from before the improvement.
 
 ## Baseline vs. Trained
 
@@ -470,38 +470,79 @@ There is no pattern to read, because there were no disagreements. The result doe
 
 ## The Improvement
 
-**What I changed:**
+**What I changed:** I added 30 new `reaction` examples to the training data, and changed nothing else about the experiment.
 
-**Which diagnosis pointed at it:**
+- **Rows added:** 30. `labels.csv` went from 200 to 230 rows. The original 200 rows, including the 20 `cold` rows, are unchanged (checked byte for byte), and the file as it was is saved as `data/labels_before_milestone5.csv`. Each new row is labelled `reaction` and has the note `added-milestone5; pre-labelled, unchecked`. Their URLs are in `data/post_sources.csv`, which now has 230 rows.
+- **Where they came from:** real, public Tennis Warehouse opening posts from threads that were not already in the dataset, found with the same polite scraper as the first 180 (about one request per second). Every post's saved text matches the live thread, none duplicates an existing row or URL, and none was chosen or labelled by looking at the test posts. Claude Code proposed 30; I had 10 of them replaced because they contained judgments, records or statistics instead of a pure reaction (for example a post that argued a player was "THE GUY to beat in big matches", and the posts that quoted Djokovic records). Under the taxonomy, a `reaction` is mainly emotion or humor in the poster's own words. The remaining labels are Claude Code's and not checked by me, and a few are borderline (for example the ten-point-tiebreaker joke and the 'Nadal's footwork' post).
+- **How the test set was kept fair:** appending rows to `labels.csv` would normally redraw every split. To avoid that, section 6 of the notebook now draws each seed's split from the original 200 rows exactly as before and adds the 30 new rows to the training set only. Before training I checked that, for all three seeds, the validation and test sets are identical to the Milestone 2 ones (same posts, same order), that the seed-42 test set still equals `test_split.csv`, and that none of the 30 new rows is in the validation or test set. Training grew from 139 to 169 rows: `reaction` from 37 to 67 (26.6% to 39.6% of training), `analysis` 47 and `hot_take` 55 unchanged.
+- **Everything else is unchanged:** model (`distilbert-base-uncased`), learning rate 2e-5, 3 epochs, batch size 16, `max_length` 128, seeds 42, 7 and 2024, and the evaluation code and metrics. The only notebook edits are `RUN_LABEL = "after"` and the split helper described above, both in section 6. The "after" results are in `results_three_seeds_after.json`; `results.json`, `test_split.csv` and `results_three_seeds_before.json` were not changed (checksums before and after).
+- **How it was run:** all three seeds completed in one execution on CPU (torch `2.14.1+cpu`, device `cpu`), the same way as the Milestone 2 run: the notebook's own code cells run from a script, with the cells that would write `results.json` and `test_split.csv` cut off.
+- **Dataset now:** 230 rows: `analysis` 69 (30.0%), `hot_take` 78 (33.9%), `reaction` 83 (36.1%). No label is above 50%, so criterion 3 is still met.
+
+**Which diagnosis pointed at it:** the verdicts above. `reaction` F1 was 0.000, 0.000 and 0.222 across the seeds, and the model called 7, 6 and 7 of the 8 test `reaction` posts `hot_take`. One of the plausible causes I listed was too few `reaction` examples, and this change tests that one idea. It does not test the others (an inconsistent boundary or a genuinely hard label pair), and the agreement report could not tell them apart.
 
 ### Run Log — After
 
+Same five criteria and targets as Run Log — Before, measured on the same test posts. Values are from `results_three_seeds_after.json`.
+
 | Criterion | Target | Seed 42 | Seed 7 | Seed 2024 | Verdict |
 |---|---|---|---|---|---|
-| 1.  |  |  |  |  |  |
-| 2.  |  |  |  |  |  |
-| 3.  |  |  |  |  |  |
-| 4.  |  |  |  |  |  |
-| 5.  |  |  |  |  |  |
+| 1. Overall accuracy | at least 0.60 on every seed | 0.633 | 0.500 | 0.633 | MISSED (seed 7) |
+| 2. Per-label F1 | at least 0.50 for every label on every seed | analysis 0.783, hot_take 0.353, reaction 0.700 | analysis 0.667, hot_take 0.000, reaction 0.571 | analysis 0.741, hot_take 0.286, reaction 0.737 | MISSED (6 of 9 scores reach 0.50; `hot_take` misses in all three seeds) |
+| 3. Label balance | no label above 50% of the dataset | n/a (whole file): largest is `reaction`, 83 of 230 = 36.1% | n/a | n/a | MET |
+| 4. Agreement with staff | at least 70% (21 of 30) | n/a: 30 of 30 = 100%, unchanged by this step | n/a | n/a | MET, with the earlier caveat |
+| 5. Confidence separation | gap of at least 0.10 on every seed | 0.90 − 0.50 = 0.40 | 0.60 − 0.30 = 0.30 | 0.90 − 0.50 = 0.40 | MET |
 
-**Did it help, and how do I know:**
+**Before and after, side by side** (seeds 42 / 7 / 2024, then the mean of the three):
 
-<!-- If it didn't, say so. Relabelling that didn't help is a genuinely
-     interesting result and earns full credit. -->
+| Measure | Before | After |
+|---|---|---|
+| Overall accuracy | 0.567 / 0.533 / 0.533, mean 0.544 | 0.633 / 0.500 / 0.633, mean 0.589 |
+| Macro F1 | 0.440 / 0.410 / 0.468, mean 0.440 | 0.612 / 0.413 / 0.588, mean 0.537 |
+| F1 — `analysis` | 0.750 / 0.692 / 0.720, mean 0.721 | 0.783 / 0.667 / 0.741, mean 0.730 |
+| F1 — `hot_take` | 0.571 / 0.538 / 0.462, mean 0.524 | 0.353 / 0.000 / 0.286, mean 0.213 |
+| F1 — `reaction` | 0.000 / 0.000 / 0.222, mean 0.074 | 0.700 / 0.571 / 0.737, mean 0.669 |
+| `reaction` recall | 0.000 / 0.000 / 0.125 | 0.875 / 0.750 / 0.875 |
+| Accuracy range across seeds | 0.033 | 0.133 |
 
+**Confusion matrices after** (rows true, columns predicted, order analysis / hot_take / reaction). The first is the one the notebook's section 7 prints, which is seed 42 only. The other two come from the same file.
 
+Seed 42 (the notebook's section 7 matrix):
+
+| true \ predicted | analysis | hot_take | reaction |
+|---|---|---|---|
+| **analysis** | 9 | 2 | 0 |
+| **hot_take** | 3 | 3 | 5 |
+| **reaction** | 0 | 1 | 7 |
+
+Seed 7: analysis row 9, 1, 1; `hot_take` row 5, 0, 6; `reaction` row 2, 0, 6. Seed 2024: analysis row 10, 1, 0; `hot_take` row 5, 2, 4; `reaction` row 1, 0, 7.
+
+**Did it help, and how do I know:** partly, and not cleanly.
+
+- **What got better:** `reaction` is now learned. Its F1 went from 0.000 / 0.000 / 0.222 to 0.700 / 0.571 / 0.737, and its recall from at most 0.125 to 0.750 to 0.875. The mean accuracy rose from 0.544 to 0.589 and the mean macro F1 from 0.440 to 0.537.
+- **What got worse:** `hot_take`. Its F1 fell in every seed (0.571 / 0.538 / 0.462 to 0.353 / 0.000 / 0.286), and in seed 7 the model predicted `hot_take` only once. The confusion between the two labels flipped direction instead of going away: in seed 42, 5 of 11 real `hot_take` posts were called `reaction` (against 0 before), and in seed 7 it was 6 of 11. Seed 7's accuracy also fell, from 0.533 to 0.500.
+- **Targets:** criterion 1 is still missed (seed 7 is 0.500). Criterion 2 is still missed: 6 of the 9 label-by-seed F1 scores now reach 0.50, up from 5, but the ones that fail changed from `reaction` to `hot_take`. Criteria 3, 4 and 5 are as before.
+- **Stability:** the accuracy range across the three seeds grew from 0.033 to 0.133, above the 0.10 mark. So performance varies a lot from split to split, which is consistent with a small dataset and 30-post test sets. The notebook calls that a diagnosis and I agree it is a real limit here.
+- **How sure I am:** not very. This is one experiment, three runs, and 30-post test sets (8 `reaction`, so each is 0.125 of that label's recall). I am not claiming significance, and the average gain is not clear evidence that the model is better. The same change raised one label and lowered another, so I cannot say that more `reaction` examples alone helped overall.
+- **Possible explanations, not tested:** adding 30 `reaction` rows also changed the class balance of training (`reaction` from 26.6% to 39.6%), so the model may now lean toward `reaction`; I cannot separate "more reaction examples" from "a different mix". The new posts are mostly short, exclamatory, celebratory forum posts, and the model may have learned those surface features instead of the boundary I defined. I have not checked either idea.
+
+**Limitations of this improvement:** the 30 added labels are Claude Code's and not checked by me; all come from one forum; all 30 are `reaction`, so the training mix changed as well as the amount of data; the test sets are small and the three seeds draw on the same 200 posts, so they are not independent; I ran each seed once; and results are for this CPU only.
 
 ---
 
 ## What's Still Broken
 
-<!-- For each criterion still missed: what you'd do, and why you stopped. -->
+Two criteria are still missed after the improvement (see Run Log — After). The facts below come from `results_three_seeds_after.json`.
 
-
+- **Criterion 1 — overall accuracy (at least 0.60 on every seed): MISSED.** Accuracy was 0.633, 0.500 and 0.633 for seeds 42, 7 and 2024. Seed 7 is below the target. Accuracy also varies more across seeds than before: the range grew from 0.033 to 0.133, above the 0.10 mark.
+- **Criterion 2 — F1 for every label (at least 0.50 on every seed): MISSED.** `reaction` now reaches the target in all three seeds (0.700, 0.571, 0.737), but `hot_take` regressed to 0.353, 0.000 and 0.286 across seeds 42, 7 and 2024, from 0.571, 0.538 and 0.462 before. Six of the nine label-by-seed scores reach 0.50.
+- **The model now confuses real `hot_take` posts with `reaction` posts.** In seed 42, 5 of the 11 real `hot_take` posts were called `reaction`, against 0 before. In seed 7 it was 6 of 11, and in seed 2024 4 of 11 were called `reaction` (and 5 `analysis`). In seed 7 the model predicted `hot_take` only once.
+- **What the experiment supports:** only a limited conclusion. On these test sets `reaction` recognition improved and `hot_take` recognition worsened. It does not show that the model is better overall or that it will behave this way on other data.
+- **Limits of the evidence:** each test set has only 30 posts (8 `reaction`, 11 `hot_take`), so one post moves a label's score a lot, and the three seeds draw on the same 200 posts. I ran each seed once. All 30 added posts come from one forum, and all 30 added `reaction` labels are Claude Code's and remain unchecked by me. I am not claiming statistical significance, and I have not diagnosed why `hot_take` got worse.
+- **What I would do next, and why I stopped:** I stopped after the one improvement, as the milestone asks. I have not done any of the following, and I do not yet know which would help: check the 30 added labels and the 180 earlier unchecked ones myself, add more `hot_take` examples, or enlarge the test sets so that the scores are less sensitive to single posts.
 
 **The gap between what I meant my labels to capture and what the model
-learned:**
-<!-- Two sentences. Your confusion matrix is the evidence. -->
+learned:** I meant `hot_take` to be a general claim without support and `reaction` to be a response to a specific moment. In the seed-42 matrix after the change, 7 of the 8 real `reaction` posts are right, but only 3 of the 11 real `hot_take` posts are, with 5 called `reaction`, so the confusion between the two labels has changed direction and I have not yet diagnosed why.
 
 
 
