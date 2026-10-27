@@ -441,55 +441,26 @@ Printed by the notebook's section 7. Rows are the true labels and columns are th
 
 ## Agreement Report
 
-<!-- Your rate against the staff set, and every disagreement adjudicated.
+### Milestone 3: Agreement Report
 
-     Remember you labelled these 30 under the STAFF taxonomy in
-     data/staff_taxonomy.md, not your own — so every argument below is made
-     from those definitions and those decision rules. -->
+I labelled the 30 staff posts under the staff taxonomy in `data/staff_taxonomy.md` (not my own taxonomy). My labels are in `my_staff_labels.csv`, the staff labels are in `data/staff_labels.csv`, and `python agreement.py` wrote `agreement_results.json`.
 
-**Agreement rate:** ___ / 30 = ___%
+**Agreement rate:** 30 / 30 = 100%
 
-<!-- Nobody grades this number. A 60% who argues every disagreement from the
-     stated rules beats a 95% who wrote "staff was right" nine times. Several
-     of the 30 were chosen because they're genuinely ambiguous — you should be
-     winning some of these. -->
+- **Posts compared:** 30
+- **Agreements:** 30
+- **Disagreements:** 0
+- **Agreement rate:** 100% (30/30)
+
+All 30 of my labels matched the staff labels. However, this result must be interpreted with caution: before I completed my labels, Claude Code (the AI assistant used in this project) had suggested classifications for all 30 posts. My final labels followed the same classification pattern, so those earlier suggestions may have influenced my decisions. Although the observed agreement rate is 100%, it cannot be treated as strong evidence of independent labeling consistency. In addition, for `sp_011` the earlier discussion pointed out that the post contained no checkable fact, after which I changed my label from `analysis` to `hot_take`. That is another reason the 100% agreement should not be interpreted as independent validation.
 
 **Disagreements**
 
-<!-- Three lines each: the post, both labels, and who you think is right and
-     why — grounded in the staff definitions you were both applying.
-
-     Then sort each into one of three piles:
-       (a) the rule covered it and I applied it loosely → a consistency problem
-       (b) the rule genuinely doesn't say               → a gap in the definitions
-       (c) the rule is ambiguous here and my reading is defensible → argue it.
-           This is a legitimate win.
-
-     Pile (a) is the one that matters most for your diagnosis: if you applied a
-     written rule two different ways on 30 posts, that is direct evidence about
-     what you did across your own 200. -->
-
-**1.**
-> *The post:*
->
-> *Staff said / I said:*
->
-> *My call, and why:*
->
-> *Which pile:*
-
-**2.**
-> *The post:*
->
-> *Staff said / I said:*
->
-> *My call, and why:*
->
-> *Which pile:*
+None. Because there were no disagreements, there were no cases to adjudicate or sort into the three disagreement categories (a), (b) and (c).
 
 **What the pattern in my disagreements tells me:**
 
-
+There is no pattern to read, because there were no disagreements. The result does not establish whether the staff rules are genuinely tight or whether the selected posts were easy to classify, particularly given the potential influence of the earlier suggestions.
 
 ---
 
